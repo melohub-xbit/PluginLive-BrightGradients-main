@@ -5,6 +5,7 @@ from passlib.context import CryptContext
 import cloudinary
 import cloudinary.uploader
 from cloudinary.utils import cloudinary_url
+import time
 
 MONGO_URL = config('MONGO_URL')
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -17,6 +18,7 @@ cloudinary.config(
     api_secret = config('CLOUDINARY_API_SECRET'),
     secure = True
 )
+
 class Database:
     client: AsyncIOMotorClient = None
     user_collection = None
@@ -53,25 +55,36 @@ class Database:
     
     @classmethod
     async def save_video(cls, video_data: dict):
-        # Upload to Cloudinary
-        upload_result = cloudinary.uploader.upload_stream(
-            video_data['video_file'],
-            resource_type="video",
-            folder="user_recordings",
-            transformation={"quality": "auto"}
-        )
+        try:
+            print("Saving video to database...")
+            timestamp = int(time.time())
+            # Upload to Cloudinary using the file content directly from the dict
+            upload_result = cloudinary.uploader.upload(
+                file=video_data['file'],  # Access the file content directly from dict
+                resource_type="video",
+                folder="user_recordings",
+                timestamp=timestamp,
+                transformation={"quality": "auto"}
+            )
 
-        # Create video document with user association
-        video_document = {
-            "user_id": video_data["user_id"],
-            "cloudinary_id": upload_result["public_id"],
-            "url": upload_result["secure_url"],
-            "created_at": datetime.utcnow(),
-            "duration": upload_result.get("duration", 0),
-            "format": upload_result.get("format", "webm")
-        }
+            print("Upload result:")
+            # Create video document with user association
+            video_document = {
+                "user_id": video_data["user_id"],
+                "cloudinary_id": upload_result["public_id"],
+                "url": upload_result["secure_url"],
+                "created_at": datetime.utcnow(),
+                "duration": upload_result.get("duration", 0),
+                "format": upload_result.get("format", "webm")
+            }
 
-        # Save to MongoDB
-        await cls.client.commsense.videos.insert_one(video_document)
-        return video_document
+            print("Video document:")
+            # Save to MongoDB
+            await cls.client.commsense.videos.insert_one(video_document)
+            return video_document
+        except Exception as e:
+            print(f"Upload error: {str(e)}")
+            raise e
+
+
 

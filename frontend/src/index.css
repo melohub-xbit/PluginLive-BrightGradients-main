@@ -70,3 +70,12 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.animate-bounce-slow {
+  animation: bounce 3s infinite;
+}
