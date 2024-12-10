@@ -16,7 +16,7 @@ security = HTTPBearer()
 # Configuration
 SECRET_KEY = config("SECRET_KEY")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_DAYS = 2
 
 class UserCreate(BaseModel):
     username: str
@@ -96,7 +96,7 @@ async def login(user_credentials: UserLogin):
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(days=ACCESS_TOKEN_EXPIRE_DAYS)
     access_token = create_access_token(
         data={"sub": user["email"]}, expires_delta=access_token_expires
     )
