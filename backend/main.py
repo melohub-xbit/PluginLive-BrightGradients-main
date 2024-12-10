@@ -2,13 +2,20 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from db.init_db import Database
 from routes.auth import router as auth_router
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await Database.connect_db()
+    yield
+    await Database.close_db()
+
+
+app = FastAPI(lifespan=lifespan)
 
 # CORS configuration
 origins = [
-    "http://localhost:5173",  # Vite default
-    # "https://your-frontend-domain.vercel.app"
+    "http://localhost:5173"
 ]
 
 app.add_middleware(
@@ -18,14 +25,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-@app.on_event("startup")
-async def startup_db_client():
-    await Database.connect_db()
-
-@app.on_event("shutdown")
-async def shutdown_db_client():
-    await Database.close_db()
 
 app.include_router(auth_router, tags=["authentication"])
 
