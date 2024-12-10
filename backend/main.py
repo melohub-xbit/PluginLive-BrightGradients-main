@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from db.init_db import Database
 from routes.auth import router as auth_router
+from routes.record import router_record as record_router
 from contextlib import asynccontextmanager
 
 @asynccontextmanager
@@ -18,6 +19,11 @@ origins = [
     "http://localhost:5173"
 ]
 
+# routers = [
+#     auth_router,
+#     record_router
+# ]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -27,6 +33,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_router, tags=["authentication"])
+app.include_router(record_router, tags=["record"])
 
 @app.get("/health")
 async def health_check():

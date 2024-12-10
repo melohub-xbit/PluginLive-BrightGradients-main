@@ -57,6 +57,10 @@ const Home = () => {
       console.error('Logout failed:', error);
     }
   };
+  
+  const handleStartAssessment = () => {
+    navigate('/record');
+  };
 
   return (
     <div className="w-screen h-screen bg-slate-900 text-white overflow-hidden relative">
@@ -157,7 +161,9 @@ const Home = () => {
                 <li>Grammar and vocabulary</li>
                 <li>Confidence metrics</li>
               </ul>
-              <button className="bg-cyan-500 px-6 py-3 rounded-lg w-full hover:bg-cyan-600 transition transform hover:scale-105 flex items-center justify-center group">
+              <button
+                    className="bg-cyan-500 px-6 py-3 rounded-lg w-full hover:bg-cyan-600 transition transform hover:scale-105 flex items-center justify-center group"
+                    onClick={handleStartAssessment}>
                 <span>Start Now</span>
                 <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
               </button>
