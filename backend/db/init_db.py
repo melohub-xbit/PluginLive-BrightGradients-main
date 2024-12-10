@@ -56,7 +56,6 @@ class Database:
     @classmethod
     async def save_video(cls, video_data: dict):
         try:
-            print("Saving video to database...")
             timestamp = int(time.time())
             # Upload to Cloudinary using the file content directly from the dict
             upload_result = cloudinary.uploader.upload(
@@ -67,7 +66,6 @@ class Database:
                 transformation={"quality": "auto"}
             )
 
-            print("Upload result:")
             # Create video document with user association
             video_document = {
                 "user_id": video_data["user_id"],
@@ -78,7 +76,6 @@ class Database:
                 "format": upload_result.get("format", "webm")
             }
 
-            print("Video document:")
             # Save to MongoDB
             await cls.client.commsense.videos.insert_one(video_document)
             return video_document
