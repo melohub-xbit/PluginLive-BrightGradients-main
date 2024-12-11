@@ -16,7 +16,11 @@ const Navbar = () => {
           className="cursor-pointer text-4xl font-bold bg-gradient-to-r from-cyan-400 to-amber-500 bg-clip-text text-transparent"
         >
           CommSense
+          <span className="text-base bg-gradient-to-r from-cyan-400 to-amber-500 bg-clip-text text-transparent">
+            | Master Your Voice
+          </span>
         </motion.h1>
+
         {userData && (
           <motion.div
             initial={{ x: 20, opacity: 0 }}

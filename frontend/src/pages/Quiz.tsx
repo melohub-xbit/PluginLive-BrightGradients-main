@@ -3,6 +3,10 @@ import { Feedback, useQuiz } from "../context/QuizContext";
 import { motion } from "framer-motion";
 import Recorder from "../components/Recorder";
 import { useState } from "react";
+import Particles from "react-tsparticles";
+import { loadFull } from "tsparticles";
+import Lottie from "react-lottie";
+import landingBg from "../assets/animations/landing-bg.json";
 
 const Quiz = () => {
   const navigate = useNavigate();
@@ -25,7 +29,6 @@ const Quiz = () => {
   }
 
   const handleQuestionChange = (index: number) => {
-    // Only allow navigation to answered questions or next unanswered question
     if (index <= answeredQuestions) {
       setCurrentQuestionIndex(index);
       setShowRecorder(false);
@@ -137,7 +140,6 @@ const Quiz = () => {
           </>
         )}
 
-        {/* Non-verbal analysis (replace with actual data) */}
         <p className="font-semibold">Non-Verbal Analysis:</p>
         <ul>
           <li>Posture: Work on maintaining a more consistent posture.</li>
@@ -180,37 +182,36 @@ const Quiz = () => {
                     : "hover:bg-cyan-600"
                 }
                 ${feedbacks[index] ? "ring-2 ring-green-400" : ""}`}
-          >
-            {index + 1}
-          </motion.button>
-        ))}
-      </div>
-
-      {/* Question Display */}
-      <motion.div
-        key={currentQuestionIndex}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-3xl mx-auto"
-      >
-        <div className="bg-slate-800 p-8 rounded-xl shadow-lg mb-6">
-          <h2 className="text-2xl mb-6 text-center">
-            {questions[currentQuestionIndex]}
-          </h2>
-
-          <div className="flex justify-center gap-4">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleNarration}
-              className={`px-4 py-2 rounded-lg transition-all ${
-                isNarrating
-                  ? "bg-gradient-to-r from-rose-500 to-amber-500"
-                  : "bg-gradient-to-r from-purple-500 to-indigo-500"
-              }`}
             >
-              {isNarrating ? "Stop Narration" : "Narrate Question"}
+              {index + 1}
             </motion.button>
+          ))}
+        </div>
+
+        <motion.div
+          key={currentQuestionIndex}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-3xl mx-auto"
+        >
+          <div className="bg-slate-800/50 backdrop-blur-sm p-8 rounded-xl shadow-lg mb-6">
+            <h2 className="text-2xl mb-6 text-center">
+              {questions[currentQuestionIndex]}
+            </h2>
+
+            <div className="flex justify-center gap-4">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleNarration}
+                className={`px-4 py-2 rounded-lg transition-all ${
+                  isNarrating
+                    ? "bg-gradient-to-r from-rose-500 to-amber-500"
+                    : "bg-gradient-to-r from-purple-500 to-indigo-500"
+                }`}
+              >
+                {isNarrating ? "Stop Narration" : "Narrate Question"}
+              </motion.button>
 
             {!showRecorder && !feedbacks[currentQuestionIndex] && (
               <motion.button
@@ -276,20 +277,20 @@ const Quiz = () => {
           </motion.div>
         )}
 
-        {/* Recorder Component */}
-        {showRecorder && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-slate-800/50 backdrop-blur-sm rounded-xl overflow-hidden"
-          >
-            <Recorder
-              questionIndex={currentQuestionIndex}
-              onComplete={() => setShowRecorder(false)}
-            />
-          </motion.div>
-        )}
-      </motion.div>
+          {showRecorder && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-slate-800/50 backdrop-blur-sm rounded-xl overflow-hidden"
+            >
+              <Recorder
+                questionIndex={currentQuestionIndex}
+                onComplete={() => setShowRecorder(false)}
+              />
+            </motion.div>
+          )}
+        </motion.div>
+      </div>
     </div>
   );
 };

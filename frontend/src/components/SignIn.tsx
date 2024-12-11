@@ -2,6 +2,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import Lottie from "react-lottie";
+import landingBg from "../assets/animations/landing-bg.json";
 
 const SignIn = () => {
   const navigate = useNavigate();

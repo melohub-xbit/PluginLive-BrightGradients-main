@@ -9,6 +9,10 @@ const SignUp = () => {
     email: "",
     password: "",
     full_name: "",
+    username: "",
+    email: "",
+    password: "",
+    full_name: "",
   });
 
   const features = [
@@ -25,15 +29,20 @@ const SignUp = () => {
     try {
       const response = await fetch("http://localhost:8000/register", {
         method: "POST",
+      const response = await fetch("http://localhost:8000/register", {
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
       if (response.ok) {
         navigate("/signin");
+        navigate("/signin");
       }
     } catch (error) {
+      console.error("Registration failed:", error);
       console.error("Registration failed:", error);
     }
   };
