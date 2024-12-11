@@ -17,12 +17,13 @@ from .auth import get_current_user
 
 #genai model
 genai.configure(api_key=os.getenv('GOOGLE_AI_API_KEY'))
-model = genai.GenerativeModel('gemini-pro')
+model = genai.GenerativeModel('gemini-1.5-flash')
 
 router_record = APIRouter()
 
 @router_record.get("/generate-questions")
 async def generate_questions():
+    print("In generate_questions")
     system_prompt = """You are a communication coach designing engaging questions to assess people's speaking abilities.
                 Create 5 thought-provoking questions that blend professional and personal scenarios.
                 
@@ -36,6 +37,7 @@ async def generate_questions():
                 
                 Aim for questions that make people think creatively while staying relevant to communication skills assessment."""
 
+    print("assigned system prompt")
     generation_config = {
         "temperature": 0.8,
         "top_p": 0.95,
@@ -54,15 +56,22 @@ async def generate_questions():
         ),
         "response_mime_type": "application/json"
     }
+    print("assigned generation config")
 
     model = genai.GenerativeModel(
-        model_name="gemini-1.5-pro",
+        model_name="gemini-1.5-flash",
         generation_config=generation_config,
         system_instruction=system_prompt
     )
 
     response = model.generate_content("Generate 5 professional communication assessment questions")
+    print("response generated")
+    print(response.text)
+    print("response printed")
+    print(response)
     questions = json.loads(response.text)
+    print("questions loaded")
+    print(questions)
     return questions
 
 @router_record.post("/save-video")
