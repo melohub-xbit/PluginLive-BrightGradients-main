@@ -110,7 +110,7 @@ const Dashboard = ({ userData }: { userData: User }) => {
             </ul>
           </div>
           <Link to="/history">
-            <button className="bg-teal-500 px-6 py-3 rounded-lg w-full hover:bg-teal-600 transition transform hover:scale-105 flex items-center justify-center group">
+            <button className="text-white bg-teal-500 px-6 py-3 rounded-lg w-full hover:bg-teal-600 transition transform hover:scale-105 flex items-center justify-center group">
               <span>View History</span>
               <span className="ml-2 group-hover:translate-x-1 transition-transform">
                 →
@@ -144,7 +144,7 @@ const Dashboard = ({ userData }: { userData: User }) => {
             </ul>
           </div>
           <Link to="/create-plan">
-            <button className="bg-amber-500 px-6 py-3 rounded-lg w-full hover:bg-amber-600 transition transform hover:scale-105 flex items-center justify-center group">
+            <button className="bg-amber-500 text-black px-6 py-3 rounded-lg w-full hover:bg-amber-600 transition transform hover:scale-105 flex items-center justify-center group">
               <span>Create Plan</span>
               <span className="ml-2 group-hover:translate-x-1 transition-transform">
                 →
