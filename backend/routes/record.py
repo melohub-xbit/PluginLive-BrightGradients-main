@@ -24,38 +24,78 @@ router_record = APIRouter()
 @router_record.get("/generate-questions")
 async def generate_questions():
     print("In generate_questions")
-    system_prompt = """You are a communication coach designing engaging questions to assess people's speaking abilities.
-                Create 5 thought-provoking questions that blend professional and personal scenarios.
-                
-                The questions should:
-                - Include both workplace and real-life situations
-                - Test storytelling abilities and personal expression
-                - Encourage detailed, natural responses
-                - Range from professional scenarios to lighter topics
-                - Focus on experiences that showcase communication style
-                - Allow personality to shine through while maintaining professionalism
-                
-                Aim for questions that make people think creatively while staying relevant to communication skills assessment."""
+    system_prompt = """Role: You are a communication coach designing engaging and insightful questions to assess and enhance people's speaking abilities while reflecting on their personal growth and interpersonal skills.
+
+Objective: Develop 7-10 thought-provoking questions that explore a variety of scenarios—professional, personal, and social—to assess communication skills while encouraging self-reflection, creativity, and depth.
+
+Guidelines for the Questions
+Scenario Diversity: Include both workplace challenges and real-life situations, blending storytelling with problem-solving.
+Key Competencies:
+Storytelling & Expression: Questions should encourage vivid, structured, and relatable storytelling.
+Leadership Skills: Situations that reveal the candidate's ability to lead, inspire, and navigate conflict.
+Overcoming Barriers: Explore how candidates handle communication breakdowns or barriers.
+Moral Reflection: Test ethical reasoning and the ability to articulate personal values.
+Social Etiquette: Assess how they handle interpersonal relationships with tact and professionalism.
+Resilience and Personal Growth: Situations that require reflection on overcoming personal or professional difficulties.
+Engagement: Questions should evoke creative, detailed, and natural responses.
+Tone: Maintain a balance between light, approachable topics and deeper, thought-provoking ones.
+Question Examples
+Workplace Scenario:
+"Describe a time when you had to give feedback to a colleague or team member that was difficult to deliver. How did you approach it, and what was the outcome?"
+
+Storytelling & Expression:
+"Share a personal experience where you made a significant decision that changed your life. What factors influenced your choice, and how did it shape who you are today?"
+
+Leadership in Action:
+"Imagine you're leading a project with a team facing a tight deadline and low morale. What specific steps would you take to motivate the team and ensure the project is completed successfully?"
+
+Overcoming Communication Barriers:
+"Describe a situation where you faced a communication barrier with someone from a different background or perspective. How did you bridge the gap and find common ground?"
+
+Morals & Values:
+"Talk about a time when you faced an ethical dilemma at work or in your personal life. How did you navigate it, and what values guided your decision-making?"
+
+Social Etiquette & Tact:
+"You're attending a networking event where you don't know anyone. How would you initiate conversations and leave a positive impression on the people you meet?"
+
+Resilience:
+"Reflect on a personal or professional setback you experienced. How did you handle the situation, and what lessons did you take away from it?"
+
+Conflict Resolution:
+"Describe a time when you had to mediate a conflict between two people or groups. What approach did you take, and what was the outcome?"
+
+Personality & Humor:
+"If you could host a dinner with three people, living or historical, who would they be and why? What would you talk about?"
+
+Vision & Creativity:
+"Imagine you are asked to give a motivational speech to a group of young professionals just starting their careers. What would your key message be, and why?"
+
+Outcome of Responses
+Gain insights into the candidate's ability to organize thoughts, articulate clearly, and connect with an audience.
+Evaluate their emotional intelligence, leadership style, and adaptability.
+Identify how well they express personal and professional values, resilience, and vision."""
 
     print("assigned system prompt")
     generation_config = {
-        "temperature": 0.8,
+        "temperature": 1,
         "top_p": 0.95,
         "top_k": 40,
-        "max_output_tokens": 1024,
+        "max_output_tokens": 8192,
         "response_schema": content.Schema(
-            type=content.Type.OBJECT,
-            properties={
-                "question1": content.Schema(type=content.Type.STRING),
-                "question2": content.Schema(type=content.Type.STRING),
-                "question3": content.Schema(type=content.Type.STRING),
-                "question4": content.Schema(type=content.Type.STRING),
-                "question5": content.Schema(type=content.Type.STRING)
+            type = content.Type.OBJECT,
+            enum = [],
+            required = ["questions"],
+            properties = {
+            "questions": content.Schema(
+                type = content.Type.ARRAY,
+                items = content.Schema(
+                type = content.Type.STRING,
+                ),
+            ),
             },
-            required=["question1", "question2", "question3", "question4", "question5"]
         ),
-        "response_mime_type": "application/json"
-    }
+        "response_mime_type": "application/json",
+        }
     print("assigned generation config")
 
     model = genai.GenerativeModel(
