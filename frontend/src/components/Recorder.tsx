@@ -77,8 +77,14 @@ const Recorder: React.FC<RecorderProps> = ({ questionIndex, onComplete }) => {
           type: "video/webm",
         });
 
+        // Extract audio using MediaRecorder's mimeType
+        const audioBlob = new Blob(recordedChunks, {
+          type: "audio/webm",
+        });
+
         const formData = new FormData();
         formData.append("video_file", blob, "recording.webm");
+        formData.append("audio_file", audioBlob, "audio.webm");
         formData.append("question", questions[questionIndex]);
 
         const token = localStorage.getItem("token");
@@ -97,15 +103,15 @@ const Recorder: React.FC<RecorderProps> = ({ questionIndex, onComplete }) => {
           setRecordedChunks([]);
           setShowSubmit(false);
           setCameraActive(false);
+          const dummyFeedback =
+            "Great response! You demonstrated clear communication and strong storytelling abilities. Consider using more specific examples in future responses.";
+
+          setFeedback(questionIndex, dummyFeedback);
+          incrementAnsweredQuestions();
+          onComplete();
         }
 
         // Dummy feedback for testing
-        const dummyFeedback =
-          "Great response! You demonstrated clear communication and strong storytelling abilities. Consider using more specific examples in future responses.";
-
-        setFeedback(questionIndex, dummyFeedback);
-        incrementAnsweredQuestions();
-        onComplete();
       } catch (error) {
         console.error("Upload failed:", error);
         alert("Video upload failed. Please try again.");

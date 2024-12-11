@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi import APIRouter, Depends, File, UploadFile, HTTPException
 from db.init_db import Database
 from .auth import get_current_user
 import google.generativeai as genai
@@ -7,7 +7,6 @@ import os
 import dotenv
 import json
 from assessment.gemini import *
-from moviepy import VideoFileClip
 import io
 
 dotenv.load_dotenv()
@@ -18,7 +17,6 @@ from fastapi import APIRouter, Depends, File, UploadFile, Form
 from db.init_db import Database
 from .auth import get_current_user
 
-#genai model
 genai.configure(api_key=os.getenv('GOOGLE_AI_API_KEY'))
 model = genai.GenerativeModel('gemini-1.5-flash')
 
@@ -120,6 +118,7 @@ Identify how well they express personal and professional values, resilience, and
 @router_record.post("/save-video")
 async def save_video(
     video_file: UploadFile = File(...),
+    audio_file: UploadFile = File(...),
     question: str = Form(...),
     current_user: dict = Depends(get_current_user)
 ):
@@ -129,28 +128,18 @@ async def save_video(
         "content_type": video_file.content_type,
         "user_id": str(current_user["_id"])
     }
-
-    # Read video bytes into memory
-    video_bytes = await video_file.read()
+ 
+     # Read audio file into bytes
+    audio_bytes = await audio_file.read()
     
-    # Create temporary video file
-    with io.BytesIO(video_bytes) as video_buffer:
-        video_clip = VideoFileClip(video_buffer)
-        # Extract audio
-        audio_clip = video_clip.audio
-        
-        # Save audio to memory buffer
-        audio_buffer = io.BytesIO()
-        audio_clip.write_audiofile(audio_buffer, codec='mp3')
-        audio_bytes = audio_buffer.getvalue()
-        candidate_assess = get_candidate_assessment(question=question, file_url=audio_bytes)
-        
-        # Clean up
-        audio_clip.close()
-        video_clip.close()
+    # Create a temporary file-like object in memory
+    audio_buffer = io.BytesIO(audio_bytes)
+    audio_buffer.name = 'audio.webm'  # Give it a name for mime type detection
 
-        print("got feedback")
-        print(candidate_assess)
+    candidate_assess = get_candidate_assessment(question=question, file_url=audio_buffer)
+
+    print("got feedback")
+    print(candidate_assess)
     result = await Database.save_video(video_data)
+    
     return {"url": result["url"]}
-

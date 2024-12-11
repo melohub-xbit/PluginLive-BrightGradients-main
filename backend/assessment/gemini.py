@@ -2,8 +2,11 @@ import os
 import json
 import google.generativeai as genai
 from google.ai.generativelanguage_v1beta.types import content
+import dotenv
 
-genai.configure(api_key=os.environ["GOOGLE_AI_API_KEY"])
+dotenv.load_dotenv()
+
+genai.configure(api_key=os.getenv('GOOGLE_AI_API_KEY'))
 
 def upload_to_gemini(path, mime_type=None):
   """Uploads the given file to Gemini.
@@ -160,7 +163,7 @@ def get_candidate_assessment(file_url, question):
     )
 
     # Upload audio file
-    audio_file = genai.upload_file(file_url, mime_type="audio/wav")
+    audio_file = genai.upload_file(file_url, mime_type="audio/webm")
 
     # Start chat session
     chat_session = model.start_chat(
