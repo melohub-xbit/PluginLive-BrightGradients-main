@@ -54,6 +54,19 @@ class Database:
         return pwd_context.verify(plain_password, hashed_password)
     
     @classmethod
+    def add_empty_dict(cls, username:str):
+        user_dict = {}
+        cls.user_collection.update_one(
+            {"username": username},
+            {"$set": {"answers": {}}}
+        )
+        cls.user_collection.update_one(
+            {"username": username},
+            {"$set": {"feedbacks": {}}}
+        )
+
+
+    @classmethod
     async def save_video(cls, video_data: dict):
         try:
             timestamp = int(time.time())

@@ -73,7 +73,6 @@ async def register(user: UserCreate):
             status_code=400,
             detail="Email already registered"
         )
-    
     existing_username = await Database.get_user_by_username(user.username)
     if existing_username:
         raise HTTPException(
@@ -81,6 +80,8 @@ async def register(user: UserCreate):
             detail="Username already taken"
         )
     await Database.save_user(user.dict())
+    Database.add_empty_dict(user.username)
+
     return {"message": "User created successfully"}
 
 @router.post("/login", response_model=Token)
