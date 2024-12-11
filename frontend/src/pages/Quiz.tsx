@@ -52,7 +52,7 @@ const Quiz = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white p-8 w-screen">
+    <div className="h-screen bg-slate-900 text-white p-8 w-screen">
       {/* Question Navigation Bar */}
       <div className="flex justify-center gap-4 mb-8">
         {questions.map((_, index) => (

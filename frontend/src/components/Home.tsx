@@ -1,63 +1,17 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { useQuiz } from "../context/QuizContext";
-
-interface UserData {
-  username: string;
-  avatar?: string;
-}
+import { useAuth } from "../context/AuthContext";
 
 const Home = () => {
-  const [userData, setUserData] = useState<UserData | null>(null);
+  const { user: userData } = useAuth();
   const navigate = useNavigate();
   const { setQuestions } = useQuiz();
 
   const particlesInit = async (main: any) => {
     await loadFull(main);
-  };
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-
-        const response = await fetch("http://localhost:8000/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setUserData(data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch user data:", error);
-      }
-    };
-
-    fetchUserData();
-  }, []);
-
-  const handleLogout = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8000/logout", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.ok) {
-        localStorage.removeItem("token");
-        setUserData(null);
-      }
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
   };
 
   const handleStartAssessment = async () => {
@@ -81,7 +35,7 @@ const Home = () => {
   };
 
   return (
-    <div className="w-screen h-screen bg-slate-900 text-white overflow-hidden relative">
+    <div className="w-full h-screen bg-slate-900 text-white overflow-hidden relative">
       <Particles
         id="tsparticles"
         init={particlesInit}
@@ -120,48 +74,13 @@ const Home = () => {
       />
 
       <div
-        className="absolute inset-0 bg-gradient-to-br from-cyan-900/30 to-amber-900/30"
+        className="absolute w-screen inset-0 bg-gradient-to-br from-cyan-900/30 to-amber-900/30"
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
         }}
       />
 
-      <nav className="bg-slate-800/80 backdrop-blur-sm p-4 relative z-10">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <motion.h1
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-amber-500 bg-clip-text text-transparent"
-          >
-            CommSense
-          </motion.h1>
-          {userData && (
-            <motion.div
-              initial={{ x: 20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              className="flex items-center space-x-4"
-            >
-              <span>{userData.username}</span>
-              <img
-                src={
-                  userData.avatar ||
-                  "https://api.dicebear.com/7.x/avataaars/svg"
-                }
-                alt="avatar"
-                className="w-10 h-10 rounded-full border-2 border-cyan-500"
-              />
-              <button
-                onClick={handleLogout}
-                className="bg-rose-500 px-4 py-2 rounded-lg hover:bg-rose-600 transition transform hover:scale-105"
-              >
-                Logout
-              </button>
-            </motion.div>
-          )}
-        </div>
-      </nav>
-
-      <main className="max-w-7xl mx-auto px-4 py-12 relative z-10">
+      <main className="w-full mx-auto px-4 py-12 relative z-10">
         {userData ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <motion.div
