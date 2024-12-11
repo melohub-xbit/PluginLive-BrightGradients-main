@@ -8,7 +8,7 @@ class CommunicationAnalyzer:
         self.mp_pose = mp.solutions.pose
         self.mp_holistic = mp.solutions.holistic
     
-    def analyze_communication(self, video_file, speech_analysis):
+    async def analyze_communication(self, video_file):
         """
         Main method to process video file and combine analysis
         
@@ -20,7 +20,7 @@ class CommunicationAnalyzer:
             Comprehensive communication assessment
         """
         # Convert file to numpy array
-        video_bytes = video_file.file.read()
+        video_bytes = await video_file.read()
         video_np_array = np.frombuffer(video_bytes, np.uint8)
         
         # Decode video directly from bytes
@@ -29,13 +29,7 @@ class CommunicationAnalyzer:
         # Non-verbal metrics extraction
         non_verbal_metrics = self._extract_non_verbal_metrics(video)
         
-        # Combine verbal and non-verbal analysis
-        communication_assessment = self._generate_comprehensive_feedback(
-            speech_analysis, 
-            non_verbal_metrics
-        )
-        
-        return communication_assessment
+        return non_verbal_metrics
     
     def _extract_non_verbal_metrics(self, video):
         """
@@ -179,38 +173,6 @@ class CommunicationAnalyzer:
             return 0.7  # Moderate eye contact
         return 0.3  # Low eye contact
     
-    def _generate_comprehensive_feedback(self, speech_analysis, non_verbal_metrics):
-        """
-        Generate comprehensive communication feedback
-        
-        Args:
-            speech_analysis: Dictionary of speech analysis results
-            non_verbal_metrics: Dictionary of non-verbal metrics
-        
-        Returns:
-            Comprehensive communication assessment
-        """
-        # Weighted combination of verbal and non-verbal scores
-        overall_score = (
-            0.5 * speech_analysis.get('speech_score', 0.5) + 
-            0.2 * non_verbal_metrics['posture_stability'] +
-            0.1 * non_verbal_metrics['gesture_dynamism'] +
-            0.1 * non_verbal_metrics['body_openness'] +
-            0.1 * non_verbal_metrics['eye_contact_quality']
-        )
-        
-        return {
-            'overall_communication_score': overall_score,
-            'detailed_breakdown': {
-                'verbal_analysis': speech_analysis,
-                'non_verbal_metrics': non_verbal_metrics
-            },
-            'communication_insights': self._generate_insights(
-                speech_analysis, 
-                non_verbal_metrics
-            )
-        }
-    
     def _generate_insights(self, speech_analysis, non_verbal_metrics):
         """
         Generate actionable insights based on analysis
@@ -235,11 +197,7 @@ class CommunicationAnalyzer:
         # Eye contact insights
         if non_verbal_metrics['eye_contact_quality'] < 0.5:
             insights.append("Improve eye contact to enhance engagement")
-        
-        # Speech-related insights
-        if speech_analysis.get('speech_clarity', 0) < 0.6:
-            insights.append("Focus on improving speech clarity and articulation")
-        
+
         return insights
 
 # FastAPI route implementation example

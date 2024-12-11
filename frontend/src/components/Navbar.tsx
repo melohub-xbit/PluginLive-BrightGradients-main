@@ -1,16 +1,19 @@
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const { user: userData, logout: handleLogout } = useAuth();
+  const navigate = useNavigate();
 
   return (
-    <nav className="bg-slate-800/80 w-full backdrop-blur-sm p-4 relative z-10">
+    <nav className="bg-slate-800/80 backdrop-blur-sm p-4 relative z-10">
       <div className="w-full mx-auto flex justify-between items-center">
         <motion.h1
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-amber-500 bg-clip-text text-transparent"
+          onClick={() => navigate("/")}
+          className="cursor-pointer text-4xl font-bold bg-gradient-to-r from-cyan-400 to-amber-500 bg-clip-text text-transparent"
         >
           CommSense
         </motion.h1>

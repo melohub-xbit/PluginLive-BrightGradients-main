@@ -15,8 +15,14 @@ const Quiz = () => {
   } = useQuiz();
   const [showRecorder, setShowRecorder] = useState(false);
   const [isNarrating, setIsNarrating] = useState(false);
+  const [loadingFinalResults, setLoadingFinalResults] = useState(false);
 
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
+
+  if (questions.length === 0) {
+    navigate("/");
+    return null;
+  }
 
   const handleQuestionChange = (index: number) => {
     // Only allow navigation to answered questions or next unanswered question
@@ -33,8 +39,42 @@ const Quiz = () => {
     }
   };
 
-  const handleFinish = () => {
-    navigate("/results");
+  const handleFinish = async () => {
+    setLoadingFinalResults(true);
+
+    // get the final results from the backend
+    // and navigate to the results page
+    try {
+      const token = localStorage.getItem("token");
+
+      const feedbackWithQuestions = Object.entries(feedbacks).map(
+        ([index, feedback]) => ({
+          question: questions[parseInt(index)], // Access question by index
+          feedback: feedback,
+        })
+      );
+
+      const response = await fetch("http://localhost:8000/final-feedback", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // Important: Set Content-Type
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(feedbackWithQuestions),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        console.log(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch final results:", error);
+    } finally {
+      setLoadingFinalResults(false);
+    }
+
+    // navigate("/results");
   };
 
   const handleNarration = () => {
@@ -50,6 +90,10 @@ const Quiz = () => {
       setIsNarrating(true);
     }
   };
+
+  if (loadingFinalResults) {
+    return <div>Loading final results...</div>;
+  }
 
   const renderFeedback = (feedback: Feedback | undefined) => {
     if (!feedback) {
@@ -115,7 +159,7 @@ const Quiz = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white p-8 w-screen">
+    <div className="min-h-screen bg-slate-900 text-white p-8 w-full">
       {/* Question Navigation Bar */}
       <div className="flex justify-center gap-4 mb-8">
         {questions.map((_, index) => (
@@ -225,7 +269,7 @@ const Quiz = () => {
                   onClick={handleFinish}
                   className="bg-green-500 px-6 py-2 rounded-lg hover:bg-green-600 transition"
                 >
-                  Finish Quiz
+                  {loadingFinalResults ? "Finishing wait.." : "Finish Quiz"}
                 </motion.button>
               )}
             </div>

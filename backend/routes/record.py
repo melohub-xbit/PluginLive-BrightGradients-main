@@ -8,6 +8,13 @@ import dotenv
 import json
 from assessment.gemini import *
 import io
+from typing import List
+from pydantic import BaseModel
+from assessment.nonverbal import CommunicationAnalyzer
+
+class FeedbackItem(BaseModel):
+    question: str
+    feedback: dict  # Or a more specific Pydantic model if the feedback structure is known
 
 dotenv.load_dotenv()
 
@@ -108,6 +115,18 @@ Identify how well they express personal and professional values, resilience, and
 
     return questions
 
+
+@router_record.post("/final-feedback")
+async def final_feedback(
+    feedbacks: List[FeedbackItem],
+    current_user: dict = Depends(get_current_user)
+):
+    try:
+        response = get_final_summary(feedbacks=feedbacks)
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router_record.post("/save-video")
 async def save_video(
     video_file: UploadFile = File(...),
@@ -129,7 +148,14 @@ async def save_video(
     audio_buffer = io.BytesIO(audio_bytes)
     audio_buffer.name = 'audio.webm'  # Give it a name for mime type detection
 
+    # verbal feedback
     candidate_assess = get_candidate_assessment(question=question, file_url=audio_buffer)
+
+    # non-verbal feedback
+    # non_verbal_analyzer = CommunicationAnalyzer()
+    # non_verbal_feedback = await non_verbal_analyzer.analyze_communication(video_file)
+
+    # print(non_verbal_feedback)
 
     result = await Database.save_video(video_data)
     

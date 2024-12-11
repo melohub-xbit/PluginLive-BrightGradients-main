@@ -65,7 +65,6 @@ class Database:
             {"$set": {"feedbacks": {}}}
         )
 
-
     @classmethod
     async def save_video(cls, video_data: dict):
         try:

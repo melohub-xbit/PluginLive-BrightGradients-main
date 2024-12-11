@@ -3,7 +3,11 @@ export default {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        agrandir: ["Agrandir"],
+      },
+    },
   },
   plugins: [],
 }

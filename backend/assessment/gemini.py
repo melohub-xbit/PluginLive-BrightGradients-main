@@ -236,3 +236,160 @@ def refine_transcript(transcript1, transcript2):
   response = chat_session.send_message("Analyze the transcripts and provide a refined transcript.")
 
   return format_gemini_response(response.text)
+
+def get_final_summary(feedbacks):
+  '''
+    This function takes a list of feedbacks as input and returns a summary of the feedbacks.
+    Args:
+        feedbacks (list): A list of feedbacks along with the questions.
+    Returns:
+        str: The summary of the feedbacks.
+  '''
+
+  # Create the model
+  generation_config = {
+    "temperature": 1,
+    "top_p": 0.95,
+    "top_k": 40,
+    "max_output_tokens": 8192,
+    "response_schema": content.Schema(
+      type = content.Type.OBJECT,
+      enum = [],
+      required = ["overall_feedback", "advanced"],
+      properties = {
+        "overall_feedback": content.Schema(
+          type = content.Type.OBJECT,
+          enum = [],
+          required = ["summary", "key_strengths", "areas_of_improvement"],
+          properties = {
+            "summary": content.Schema(
+              type = content.Type.STRING,
+            ),
+            "key_strengths": content.Schema(
+              type = content.Type.STRING,
+            ),
+            "areas_of_improvement": content.Schema(
+              type = content.Type.STRING,
+            ),
+          },
+        ),
+        "advanced": content.Schema(
+          type = content.Type.OBJECT,
+          enum = [],
+          required = ["articulation", "enunciation", "intelligibility", "tone", "filler_word_usage", "pause_pattern", "speaking_rate", "actionable_recommendations", "personalized_examples"],
+          properties = {
+            "articulation": content.Schema(
+              type = content.Type.STRING,
+            ),
+            "enunciation": content.Schema(
+              type = content.Type.STRING,
+            ),
+            "intelligibility": content.Schema(
+              type = content.Type.STRING,
+            ),
+            "tone": content.Schema(
+              type = content.Type.STRING,
+            ),
+            "filler_word_usage": content.Schema(
+              type = content.Type.OBJECT,
+              enum = [],
+              required = ["count", "comment"],
+              properties = {
+                "count": content.Schema(
+                  type = content.Type.INTEGER,
+                ),
+                "comment": content.Schema(
+                  type = content.Type.STRING,
+                ),
+              },
+            ),
+            "pause_pattern": content.Schema(
+              type = content.Type.OBJECT,
+              enum = [],
+              required = ["count", "comment"],
+              properties = {
+                "count": content.Schema(
+                  type = content.Type.INTEGER,
+                ),
+                "comment": content.Schema(
+                  type = content.Type.STRING,
+                ),
+              },
+            ),
+            "sentence_structuring_and_grammar": content.Schema(
+              type = content.Type.STRING,
+            ),
+            "speaking_rate": content.Schema(
+              type = content.Type.OBJECT,
+              enum = [],
+              required = ["rate", "comment"],
+              properties = {
+                "rate": content.Schema(
+                  type = content.Type.INTEGER,
+                ),
+                "comment": content.Schema(
+                  type = content.Type.STRING,
+                ),
+              },
+            ),
+            "actionable_recommendations": content.Schema(
+              type = content.Type.ARRAY,
+              items = content.Schema(
+                type = content.Type.OBJECT,
+                enum = [],
+                required = ["recommendation", "reason"],
+                properties = {
+                  "recommendation": content.Schema(
+                    type = content.Type.STRING,
+                  ),
+                  "reason": content.Schema(
+                    type = content.Type.STRING,
+                  ),
+                },
+              ),
+            ),
+            "personalized_examples": content.Schema(
+              type = content.Type.ARRAY,
+              items = content.Schema(
+                type = content.Type.OBJECT,
+                enum = [],
+                required = ["feedback", "line"],
+                properties = {
+                  "feedback": content.Schema(
+                    type = content.Type.STRING,
+                  ),
+                  "line": content.Schema(
+                    type = content.Type.STRING,
+                  ),
+                },
+              ),
+            ),
+          },
+        ),
+      },
+    ),
+    "response_mime_type": "application/json",
+  }
+
+  model = genai.GenerativeModel(
+    model_name="gemini-1.5-flash",
+    generation_config=generation_config,
+    system_instruction="You are an advanced communication analysis and report generation expert. Your task is to summarize the results of a 5-question communication skills quiz, where each question includes detailed feedback in the following format:  \n\n### Input Format (Example Feedback):  \n```json\n{\n  \"advanced_parameters\": {\n    \"articulation\": \"Articulation is clear, but could be improved for a more polished delivery.\",\n    \"enunciation\": \"Enunciation is understandable but lacks precision at times.\",\n    \"intelligibility\": \"The response is mostly intelligible, though some words are mumbled.\",\n    \"tone\": \"The tone is somewhat hesitant and lacks confidence.\"\n  },\n  \"filler_word_usage\": {\n    \"comment\": \"The response includes a noticeable pause and lack of a clear direction in the middle of the introduction, indicating a lack of preparation and potentially nervousness.\",\n    \"count\": 1\n  },\n  \"general_feedback\": \"The candidate's self-introduction is brief and lacks detail. It is unclear why the candidate wants to change careers. The introduction needs significant improvement to be effective.\",\n  \"pause_pattern\": {\n    \"comment\": \"The significant pause in the middle of the response disrupts the flow and suggests a lack of preparation or confidence. Pauses should be used strategically.\",\n    \"count\": 2\n  },\n  \"sentence_structuring_and_grammar\": \"Sentence structure is simple but grammatically correct. The response would benefit from more structured and comprehensive sentences.\",\n  \"speaking_rate\": {\n    \"comment\": \"The speaking rate is slow in places, adding to the perception of hesitancy.\",\n    \"rate\": 2\n  },\n  \"timestamped_feedback\": [\n    {\n      \"feedback\": \"Improve the flow here by eliminating the long pause and elaborating on your career change aspirations.\",\n      \"time\": \"00:00:08\"\n    },\n    {\n      \"feedback\": \"Add more detail about your experience and skills. Quantify your achievements whenever possible.\",\n      \"time\": \"00:00:15\"\n    }\n  ],\n  \"transcript\": \"Hello, I am Sunhit Goswami. I am a marketing manager at Salesforce. I want to uh change my career now. I enjoy marketing. Thank you.\"\n}\n```  \n\n### Task Requirements:  \nAnalyze and combine the feedback from all 5 responses into a **comprehensive final assessment** that includes the following sections:  \n\n1. **Overall Feedback**: Summarize the key strengths and areas for improvement across all responses.  \n2. **Rubric-Specific Insights**:  \n   - Articulation, Enunciation, Intelligibility, and Tone  \n   - Filler Word Usage and Pauses  \n   - Sentence Structuring and Grammar  \n   - Speaking Rate  \n3. **Actionable Recommendations**: Provide targeted advice on how to improve the candidate's communication skills based on recurring patterns in the feedback.  \n4. **Personalized Examples**: Highlight 2–3 specific timestamped examples where the candidate can make significant improvements.  \n5. **Final Transcript Commentary**: Include observations on how the candidate's responses align or diverge from the intended communication goals.  \n\n### Additional Output:\nStructure the output to be ready for generating a PDF report, ensuring clear sections and formatting for professional presentation.  \n\nMake the summary detailed, actionable, and tailored to help the candidate improve effectively.\n\nHere is an example of the summary:\n{\n  \"overall_feedback\": {\n    \"summary\": \"The candidate demonstrates a basic understanding of communication but requires significant improvement in delivery and structure.\",\n    \"key_strengths\": [\"Clear articulation\", \"Basic grammar usage\"],\n    \"areas_for_improvement\": [\"Confidence in tone\", \"Detailed and structured responses\", \"Reduced filler word usage\"]\n  },\n  \"rubric_specific_insights\": {\n    \"articulation\": \"Mostly clear but lacks polish.\",\n    \"enunciation\": \"Understandable but needs greater precision.\",\n    \"intelligibility\": \"Generally intelligible, with occasional mumbling.\",\n    \"tone\": \"Hesitant and lacks confidence.\",\n    \"filler_word_usage\": {\n      \"count\": 5,\n      \"comment\": \"Frequent use of 'um' and 'uh,' suggesting nervousness.\"\n    },\n    \"pause_pattern\": {\n      \"count\": 3,\n      \"comment\": \"Pauses disrupt flow and appear unintentional.\"\n    },\n    \"sentence_structuring_and_grammar\": \"Basic sentence structure with room for more complex constructions.\",\n    \"speaking_rate\": {\n      \"rate\": 2,\n      \"comment\": \"Slow speaking rate creates an impression of hesitancy.\"\n    }\n  },\n  \"actionable_recommendations\": [\n    {\n      \"recommendation\": \"Practice delivering responses with more confidence.\",\n      \"reason\": \"A confident tone will enhance audience engagement.\"\n    },\n    {\n      \"recommendation\": \"Reduce filler words through practice.\",\n      \"reason\": \"Eliminating filler words will create a more professional impression.\"\n    }\n  ],\n  \"personalized_examples\": [\n    {\n      \"feedback\": \"Clarify your career change aspirations.\",\n      \"line\": \"So I now uh want to change into marketing\"\n    },\n    {\n      \"feedback\": \"Add more detail about your skills and achievements.\",\n      \"line\": \"I won a competition in India\"\n    }\n  ],\n  \"final_transcript_commentary\": \"The transcript reflects a hesitant speaker with basic structure and clarity but requires better detail and fluency.\"\n}\n",
+  )
+
+  chat_session = model.start_chat(
+    history=[
+      {
+        "role": "user",
+        "parts": [
+          f"""Here are the 5 individual feedbacks along with their questions:
+            {feedbacks}           
+            \n Provide a summary of the feedbacks.""",
+        ],
+      },
+    ]
+  )
+
+  response = chat_session.send_message("Generate feedback.")
+
+  return format_gemini_response(response.text)

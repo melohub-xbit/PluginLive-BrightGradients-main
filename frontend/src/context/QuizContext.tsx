@@ -47,6 +47,7 @@ interface QuizContextType {
   setQuestions: (questions: string[]) => void;
   setCurrentQuestionIndex: (index: number) => void;
   setFeedback: (questionIndex: number, feedback: Feedback) => void;
+  setFeedbacks: (feedbacks: Record<number, Feedback>) => void;
 }
 
 const QuizContext = createContext<QuizContextType | undefined>(undefined);
@@ -75,6 +76,7 @@ export const QuizProvider = ({ children }: { children: ReactNode }) => {
         setQuestions,
         setCurrentQuestionIndex,
         setFeedback,
+        setFeedbacks,
         incrementAnsweredQuestions,
       }}
     >
