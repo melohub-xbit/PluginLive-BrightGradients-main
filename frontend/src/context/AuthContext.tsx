@@ -10,6 +10,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   logout: () => void;
+  login: (credentials: { username: string; password: string }) => Promise<void>;
   loading: boolean;
 }
 
@@ -17,6 +18,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   isAuthenticated: false,
   logout: () => {},
+  login: async () => {},
   loading: true,
 });
 
@@ -50,6 +52,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setLoading(false);
   }, []);
 
+  const login = async (credentials: { username: string; password: string }) => {
+    try {
+      const response = await fetch("http://localhost:8000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem("token", data.access_token);
+
+        const res = await fetch("http://localhost:8000/me", {
+          headers: {
+            Authorization: `Bearer ${data.access_token}`,
+          },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data);
+        }
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
+
   const logout = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -75,6 +105,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         isAuthenticated: !!user,
         logout,
         loading,
+        login,
       }}
     >
       {children}

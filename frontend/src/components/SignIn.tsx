@@ -1,14 +1,17 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
+import { useAuth } from "../context/AuthContext";
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
+
   const [credentials, setCredentials] = useState({
-    username: '',
-    password: ''
+    username: "",
+    password: "",
   });
 
   const particlesInit = async (main: any) => {
@@ -17,22 +20,8 @@ const SignIn = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const response = await fetch('http://localhost:8000/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('token', data.access_token);
-        navigate('/');
-      }
-    } catch (error) {
-      console.error('Login failed:', error);
-    }
+    await login(credentials);
+    navigate("/");
   };
 
   return (
@@ -74,21 +63,21 @@ const SignIn = () => {
         className="absolute inset-0"
       />
 
-      <div 
+      <div
         className="absolute inset-0 bg-gradient-to-br from-cyan-900/30 to-amber-900/30"
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
         }}
       />
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="max-w-md w-full space-y-8 p-8 bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-700 relative z-10"
       >
         <div>
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
@@ -96,7 +85,9 @@ const SignIn = () => {
           >
             Welcome Back
           </motion.h2>
-          <p className="mt-2 text-center text-slate-400">Sign in to continue your journey</p>
+          <p className="mt-2 text-center text-slate-400">
+            Sign in to continue your journey
+          </p>
         </div>
 
         <div className="grid grid-cols-3 gap-4 mb-8">
@@ -119,9 +110,9 @@ const SignIn = () => {
             <p className="text-xs text-slate-400">Skill Growth</p>
           </div>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
@@ -132,7 +123,9 @@ const SignIn = () => {
                 type="text"
                 placeholder="Username or Email"
                 className="w-full p-3 bg-slate-700/50 backdrop-blur-sm border border-slate-600 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition text-white"
-                onChange={(e) => setCredentials({...credentials, username: e.target.value})}
+                onChange={(e) =>
+                  setCredentials({ ...credentials, username: e.target.value })
+                }
               />
             </div>
             <div>
@@ -140,7 +133,9 @@ const SignIn = () => {
                 type="password"
                 placeholder="Password"
                 className="w-full p-3 bg-slate-700/50 backdrop-blur-sm border border-slate-600 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition text-white"
-                onChange={(e) => setCredentials({...credentials, password: e.target.value})}
+                onChange={(e) =>
+                  setCredentials({ ...credentials, password: e.target.value })
+                }
               />
             </div>
           </motion.div>
@@ -150,26 +145,26 @@ const SignIn = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <button 
+            <button
               type="submit"
               className="w-full p-3 bg-gradient-to-r from-cyan-500 to-teal-500 text-white rounded-lg font-medium relative overflow-hidden group"
             >
-              <span className="absolute inset-0 bg-white/10 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-300"/>
+              <span className="absolute inset-0 bg-white/10 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-300" />
               <span className="relative">Sign In</span>
             </button>
           </motion.div>
         </form>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
           className="text-center"
         >
           <p className="text-slate-400">
-            Don't have an account?{' '}
-            <button 
-              onClick={() => navigate('/signup')}
+            Don't have an account?{" "}
+            <button
+              onClick={() => navigate("/signup")}
               className="text-cyan-400 hover:text-cyan-300 transition"
             >
               Sign Up
