@@ -261,7 +261,9 @@ const Recorder: React.FC = () => {
                                     </div>
                                 )}
                             </div>
+                            
                         )}
+                        
                     </div>
                 </div>
             )}
