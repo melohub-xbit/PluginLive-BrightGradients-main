@@ -4,15 +4,27 @@ import { useNavigate } from "react-router-dom";
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { useAuth } from "../context/AuthContext";
+import Lottie from "react-lottie";
+import landingBg from "../assets/animations/landing-bg.json";
 
 const SignIn = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
-
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
   });
+
+  const landingOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: landingBg,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+      progressiveLoad: true
+    },
+    isClickToPauseDisabled: true
+  };
 
   const particlesInit = async (main: any) => {
     await loadFull(main);
@@ -26,6 +38,14 @@ const SignIn = () => {
 
   return (
     <div className="w-screen h-screen bg-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute inset-0">
+        <Lottie 
+          options={landingOptions}
+          style={{ width: '100%', height: '100%' }}
+          isClickToPauseDisabled={true}
+        />
+      </div>
+      
       <Particles
         id="tsparticles"
         init={particlesInit}
@@ -63,7 +83,7 @@ const SignIn = () => {
         className="absolute inset-0"
       />
 
-      <div
+      <div 
         className="absolute inset-0 bg-gradient-to-br from-cyan-900/30 to-amber-900/30"
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
@@ -161,14 +181,15 @@ const SignIn = () => {
           transition={{ delay: 0.5 }}
           className="text-center"
         >
-          <p className="text-slate-400">
+          <p className="bg-slate-900 text-slate-400">
             Don't have an account?{" "}
             <button
               onClick={() => navigate("/signup")}
-              className="text-cyan-400 hover:text-cyan-300 transition"
+              className="bg-black-800 px-4 py-2 rounded-lg text-white-400 hover:bg-black-700 transition"
             >
               Sign Up
             </button>
+
           </p>
         </motion.div>
       </motion.div>

@@ -1,17 +1,30 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
+import Lottie from "react-lottie";
+import landingBg from "../assets/animations/landing-bg.json";
 
 const SignUp = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    full_name: ''
+    username: "",
+    email: "",
+    password: "",
+    full_name: "",
   });
+
+  const landingOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: landingBg,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+      progressiveLoad: true
+    },
+    isClickToPauseDisabled: true
+  };
 
   const particlesInit = async (main: any) => {
     await loadFull(main);
@@ -20,23 +33,31 @@ const SignUp = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:8000/register', {
-        method: 'POST',
+      const response = await fetch("http://localhost:8000/register", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
       if (response.ok) {
-        navigate('/signin');
+        navigate("/signin");
       }
     } catch (error) {
-      console.error('Registration failed:', error);
+      console.error("Registration failed:", error);
     }
   };
 
   return (
     <div className="w-screen h-screen bg-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute inset-0">
+        <Lottie 
+          options={landingOptions}
+          style={{ width: '100%', height: '100%' }}
+          isClickToPauseDisabled={true}
+        />
+      </div>
+
       <Particles
         id="tsparticles"
         init={particlesInit}
@@ -81,14 +102,14 @@ const SignUp = () => {
         }}
       />
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="max-w-md w-full space-y-8 p-8 bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-700 relative z-10"
       >
         <div>
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
@@ -121,7 +142,7 @@ const SignUp = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
@@ -132,7 +153,9 @@ const SignUp = () => {
                 type="text"
                 placeholder="Full Name"
                 className="w-full p-3 bg-slate-700/50 backdrop-blur-sm border border-slate-600 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition text-white"
-                onChange={(e) => setFormData({...formData, full_name: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, full_name: e.target.value })
+                }
               />
             </div>
             <div>
@@ -140,7 +163,9 @@ const SignUp = () => {
                 type="text"
                 placeholder="Username"
                 className="w-full p-3 bg-slate-700/50 backdrop-blur-sm border border-slate-600 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition text-white"
-                onChange={(e) => setFormData({...formData, username: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, username: e.target.value })
+                }
               />
             </div>
             <div>
@@ -148,7 +173,9 @@ const SignUp = () => {
                 type="email"
                 placeholder="Email"
                 className="w-full p-3 bg-slate-700/50 backdrop-blur-sm border border-slate-600 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition text-white"
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
               />
             </div>
             <div>
@@ -156,7 +183,9 @@ const SignUp = () => {
                 type="password"
                 placeholder="Password"
                 className="w-full p-3 bg-slate-700/50 backdrop-blur-sm border border-slate-600 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition text-white"
-                onChange={(e) => setFormData({...formData, password: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
               />
             </div>
           </motion.div>
@@ -166,27 +195,27 @@ const SignUp = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <button 
+            <button
               type="submit"
               className="w-full p-3 bg-gradient-to-r from-cyan-500 to-teal-500 text-white rounded-lg font-medium relative overflow-hidden group"
             >
-              <span className="absolute inset-0 bg-white/10 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-300"/>
+              <span className="absolute inset-0 bg-white/10 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-300" />
               <span className="relative">Create Account</span>
             </button>
           </motion.div>
         </form>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
           className="text-center"
         >
-          <p className="text-slate-400">
-            Already have an account?{' '}
-            <button 
-              onClick={() => navigate('/signin')}
-              className="text-cyan-400 hover:text-cyan-300 transition"
+          <p className="bg-slate-900 text-slate-400">
+            Already have an account?{" "}
+            <button
+              onClick={() => navigate("/signin")}
+              className="bg-black-800 px-4 py-2 rounded-lg text-white-400 hover:bg-black-700 transition"
             >
               Sign In
             </button>
