@@ -171,7 +171,7 @@ const Home = () => {
             </motion.div>
           </div>
         ) : (
-          <div className="text-center relative">
+          <div className="w-screen w-full h-screen flex flex-col items-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
