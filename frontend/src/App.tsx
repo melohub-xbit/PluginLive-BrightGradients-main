@@ -6,6 +6,7 @@ import { QuizProvider } from "./context/QuizContext.tsx";
 import Quiz from "./pages/Quiz.tsx";
 import { AuthProvider } from "./context/AuthContext.tsx";
 import Navbar from "./components/Navbar.tsx";
+import Results from "./pages/Results.tsx";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/signin" element={<SignIn />} />
             <Route path="/" element={<Home />} />
             <Route path="/quiz" element={<Quiz />} />
+            <Route path="/results" element={<Results />} />
           </Routes>
         </Router>
       </QuizProvider>

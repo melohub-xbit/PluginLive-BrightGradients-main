@@ -4,33 +4,32 @@ import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { useQuiz } from "../context/QuizContext";
 import { useAuth } from "../context/AuthContext";
+import { useState } from "react";
 
 const Home = () => {
   const { user: userData } = useAuth();
   const navigate = useNavigate();
   const { setQuestions } = useQuiz();
+  const [loadingQues, setLoadingQues] = useState(false);
 
   const particlesInit = async (main: any) => {
     await loadFull(main);
   };
 
   const handleStartAssessment = async () => {
+    setLoadingQues(true);
+
     try {
       // get all the questions here
-      // const response = await fetch("http://127.0.0.1:8000/generate-questions");
-      // const data = await response.json();
-      // const questionList = Object.values(data);
-      const dummyQuestions = [
-        "Describe a challenging workplace situation where your communication skills made a positive difference. What was the outcome?",
-        "Tell me about a time when you had to explain a complex concept to someone who had no background in that area. How did you approach it?",
-        "Share an experience where you had to give constructive feedback to a colleague or friend. How did you handle the conversation?",
-        "What's the most memorable presentation or public speaking experience you've had? What made it stand out?",
-        "If you could teach others one key communication principle that has served you well, what would it be and why?",
-      ];
-      setQuestions(dummyQuestions);
+      const response = await fetch("http://localhost:8000/generate-questions");
+      const data = await response.json();
+
+      setQuestions(data.questions);
       navigate("/quiz");
     } catch (error) {
       console.error("Failed to fetch questions:", error);
+    } finally {
+      setLoadingQues(false);
     }
   };
 
@@ -108,7 +107,7 @@ const Home = () => {
                 className="bg-cyan-500 px-6 py-3 rounded-lg w-full hover:bg-cyan-600 transition transform hover:scale-105 flex items-center justify-center group"
                 onClick={handleStartAssessment}
               >
-                <span>Start Now</span>
+                <span>{loadingQues ? "Loading..." : "Start Now"}</span>
                 <span className="ml-2 group-hover:translate-x-1 transition-transform">
                   →
                 </span>

@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import Webcam from "react-webcam";
 import { motion } from "framer-motion";
-import { useQuiz } from "../context/QuizContext";
+import { Feedback, useQuiz } from "../context/QuizContext";
 
 interface RecorderProps {
   questionIndex: number;
@@ -103,15 +103,14 @@ const Recorder: React.FC<RecorderProps> = ({ questionIndex, onComplete }) => {
           setRecordedChunks([]);
           setShowSubmit(false);
           setCameraActive(false);
-          const dummyFeedback =
-            "Great response! You demonstrated clear communication and strong storytelling abilities. Consider using more specific examples in future responses.";
 
-          setFeedback(questionIndex, dummyFeedback);
+          const data: { url: string; feedback: Feedback } =
+            await response.json();
+
+          setFeedback(questionIndex, data.feedback);
           incrementAnsweredQuestions();
           onComplete();
         }
-
-        // Dummy feedback for testing
       } catch (error) {
         console.error("Upload failed:", error);
         alert("Video upload failed. Please try again.");

@@ -24,7 +24,6 @@ router_record = APIRouter()
 
 @router_record.get("/generate-questions")
 async def generate_questions():
-    print("In generate_questions")
     system_prompt = """Role: You are a communication coach designing engaging and insightful questions to assess and enhance people's speaking abilities while reflecting on their personal growth and interpersonal skills.
 
 Objective: Develop 7-10 thought-provoking questions that explore a variety of scenarios—professional, personal, and social—to assess communication skills while encouraging self-reflection, creativity, and depth.
@@ -76,7 +75,6 @@ Gain insights into the candidate's ability to organize thoughts, articulate clea
 Evaluate their emotional intelligence, leadership style, and adaptability.
 Identify how well they express personal and professional values, resilience, and vision."""
 
-    print("assigned system prompt")
     generation_config = {
         "temperature": 1,
         "top_p": 0.95,
@@ -97,7 +95,6 @@ Identify how well they express personal and professional values, resilience, and
         ),
         "response_mime_type": "application/json",
         }
-    print("assigned generation config")
 
     model = genai.GenerativeModel(
         model_name="gemini-1.5-flash",
@@ -106,13 +103,9 @@ Identify how well they express personal and professional values, resilience, and
     )
 
     response = model.generate_content("Generate 5 professional communication assessment questions")
-    print("response generated")
-    print(response.text)
-    print("response printed")
-    print(response)
+
     questions = json.loads(response.text)
-    print("questions loaded")
-    print(questions)
+
     return questions
 
 @router_record.post("/save-video")
@@ -138,8 +131,6 @@ async def save_video(
 
     candidate_assess = get_candidate_assessment(question=question, file_url=audio_buffer)
 
-    print("got feedback")
-    print(candidate_assess)
     result = await Database.save_video(video_data)
     
-    return {"url": result["url"]}
+    return {"url": result["url"], "feedback": candidate_assess}

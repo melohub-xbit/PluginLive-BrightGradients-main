@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useQuiz } from "../context/QuizContext";
+import { Feedback, useQuiz } from "../context/QuizContext";
 import { motion } from "framer-motion";
 import Recorder from "../components/Recorder";
 import { useState } from "react";
@@ -51,8 +51,71 @@ const Quiz = () => {
     }
   };
 
+  const renderFeedback = (feedback: Feedback | undefined) => {
+    if (!feedback) {
+      return <p>No feedback available for this question.</p>;
+    }
+
+    return (
+      <div>
+        <p className="font-semibold">General Feedback:</p>
+        <p>{feedback.general_feedback}</p>
+        {feedback.transcript && (
+          <p>
+            <strong>Transcript:</strong> {feedback.transcript}
+          </p>
+        )}
+
+        <p className="font-semibold">Verbal Analysis:</p>
+        <ul>
+          <li>Articulation: {feedback.advanced_parameters.articulation}</li>
+          <li>Enunciation: {feedback.advanced_parameters.enunciation}</li>
+          <li>Tone: {feedback.advanced_parameters.tone}</li>
+          <li>
+            Grammar & Structure: {feedback.sentence_structuring_and_grammar}
+          </li>
+          <li>Speaking Rate: {feedback.speaking_rate.comment}</li>
+          <li>Filler Words: {feedback.filler_word_usage.comment}</li>
+        </ul>
+
+        {feedback.timestamped_feedback.length > 0 && (
+          <>
+            <p className="font-semibold">Timestamped Feedback:</p>
+            <ul>
+              {feedback.timestamped_feedback.map(
+                (item: { time: string; feedback: string }, i: number) => (
+                  <li key={i}>
+                    {item.time}: {item.feedback}
+                  </li>
+                )
+              )}
+            </ul>
+          </>
+        )}
+
+        {/* Non-verbal analysis (replace with actual data) */}
+        <p className="font-semibold">Non-Verbal Analysis:</p>
+        <ul>
+          <li>Posture: Work on maintaining a more consistent posture.</li>
+          <li>Gestures: Use more expressive hand gestures.</li>
+          <li>Eye Contact: Improve eye contact to enhance engagement.</li>
+          <li>Speech Clarity: Focus on clarity and articulation.</li>
+        </ul>
+
+        <p className="font-semibold">Summary:</p>
+        <ul>
+          <li>Strengths: Correct grammar and sentence structure.</li>
+          <li>
+            Improvements Needed: Build confidence in tone and use gestures
+            effectively.
+          </li>
+        </ul>
+      </div>
+    );
+  };
+
   return (
-    <div className="h-screen bg-slate-900 text-white p-8 w-screen">
+    <div className="min-h-screen bg-slate-900 text-white p-8 w-screen">
       {/* Question Navigation Bar */}
       <div className="flex justify-center gap-4 mb-8">
         {questions.map((_, index) => (
@@ -124,10 +187,26 @@ const Quiz = () => {
             animate={{ opacity: 1, y: 0 }}
             className="bg-slate-800/50 p-6 rounded-xl mb-6 border border-green-500/30"
           >
-            <h3 className="text-lg font-medium mb-2 text-green-400">
-              Feedback
-            </h3>
-            <p className="text-slate-300">{feedbacks[currentQuestionIndex]}</p>
+            <p className="text-slate-300">
+              {feedbacks[currentQuestionIndex] && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-slate-800/50 p-6 rounded-xl mb-6 border border-green-500/30"
+                >
+                  <h3 className="text-lg font-medium mb-2 text-green-400">
+                    Feedback
+                  </h3>
+
+                  {/* Render the structured feedback */}
+                  {renderFeedback(feedbacks[currentQuestionIndex])}
+
+                  <div className="flex justify-end mt-4">
+                    {/* ... (Next Question/Finish Quiz buttons) */}
+                  </div>
+                </motion.div>
+              )}
+            </p>
 
             <div className="flex justify-end mt-4">
               {!isLastQuestion ? (
