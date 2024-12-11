@@ -6,6 +6,9 @@ from google.ai.generativelanguage_v1beta.types import content
 import os
 import dotenv
 import json
+from assessment.gemini import *
+from moviepy import VideoFileClip
+import io
 
 dotenv.load_dotenv()
 
@@ -117,6 +120,7 @@ Identify how well they express personal and professional values, resilience, and
 @router_record.post("/save-video")
 async def save_video(
     video_file: UploadFile = File(...),
+    question: str = Form(...),
     current_user: dict = Depends(get_current_user)
 ):
     video_data = {
@@ -125,6 +129,28 @@ async def save_video(
         "content_type": video_file.content_type,
         "user_id": str(current_user["_id"])
     }
+
+    # Read video bytes into memory
+    video_bytes = await video_file.read()
+    
+    # Create temporary video file
+    with io.BytesIO(video_bytes) as video_buffer:
+        video_clip = VideoFileClip(video_buffer)
+        # Extract audio
+        audio_clip = video_clip.audio
+        
+        # Save audio to memory buffer
+        audio_buffer = io.BytesIO()
+        audio_clip.write_audiofile(audio_buffer, codec='mp3')
+        audio_bytes = audio_buffer.getvalue()
+        candidate_assess = get_candidate_assessment(question=question, file_url=audio_bytes)
+        
+        # Clean up
+        audio_clip.close()
+        video_clip.close()
+
+        print("got feedback")
+        print(candidate_assess)
     result = await Database.save_video(video_data)
     return {"url": result["url"]}
 
