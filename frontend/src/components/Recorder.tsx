@@ -18,7 +18,7 @@ const Recorder: React.FC<RecorderProps> = ({ questionIndex, onComplete }) => {
   const [uploading, setUploading] = useState(false);
   const [showSubmit, setShowSubmit] = useState(false);
   const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
-  const { setFeedback, incrementAnsweredQuestions } = useQuiz();
+  const { setFeedback, incrementAnsweredQuestions, questions } = useQuiz();
 
   const handleStartCamera = async () => {
     setCameraActive(true);
@@ -76,8 +76,10 @@ const Recorder: React.FC<RecorderProps> = ({ questionIndex, onComplete }) => {
         const blob = new Blob(recordedChunks, {
           type: "video/webm",
         });
+
         const formData = new FormData();
         formData.append("video_file", blob, "recording.webm");
+        formData.append("question", questions[questionIndex]);
 
         const token = localStorage.getItem("token");
         const response = await fetch("http://localhost:8000/save-video", {
