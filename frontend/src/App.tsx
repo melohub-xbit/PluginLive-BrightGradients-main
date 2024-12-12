@@ -22,65 +22,53 @@ function App() {
     <AuthProvider>
       <Toaster />
       <QuizProvider>
-        <Protector>
-          <Router>
-            <Navbar />
-            <Routes>
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/signin" element={<SignIn />} />
-              <Route path="/" element={<Home />} />
-              <Route
-                path="/quiz"
-                element={
-                  <ProtectedRoute>
-                    <Quiz />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/results"
-                element={
-                  <ProtectedRoute>
-                    <Results />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/history"
-                element={
-                  <ProtectedRoute>
-                    <History />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/create-plan"
-                element={
-                  <ProtectedRoute>
-                    <CreatePlan />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/about" element={<About />} />
-            </Routes>
-          </Router>
-        </Protector>
+        <Router>
+          <Navbar />
+          <Routes>
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/" element={<Home />} />
+            <Route
+              path="/quiz"
+              element={
+                <ProtectedRoute>
+                  <Quiz />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/results"
+              element={
+                <ProtectedRoute>
+                  <Results />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/history"
+              element={
+                <ProtectedRoute>
+                  <History />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/create-plan"
+              element={
+                <ProtectedRoute>
+                  <CreatePlan />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/about" element={<About />} />
+          </Routes>
+        </Router>
       </QuizProvider>
     </AuthProvider>
   );
 }
 
 export default App;
-
-function Protector({ children }: { children: React.ReactNode }) {
-  const { loading, user } = useAuth();
-
-  if (loading || !user) {
-    return <div>Loading...</div>;
-  }
-
-  return <>{children}</>;
-}
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
