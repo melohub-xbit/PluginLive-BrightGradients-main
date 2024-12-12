@@ -14,15 +14,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-# CORS configuration
-origins = [
-    "http://localhost:5173"
-]
-
-# routers = [
-#     auth_router,
-#     record_router
-# ]
 
 app.add_middleware(
     CORSMiddleware,

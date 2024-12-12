@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Recorder from "../components/Recorder";
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
+import { CircularProgress, Typography } from '@mui/material';
 
 const Quiz = () => {
   const navigate = useNavigate();
@@ -100,7 +101,12 @@ const Quiz = () => {
   };
 
   if (loadingFinalResults) {
-    return <div>Loading final results...</div>;
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+        <Typography variant="body1" style={{ marginTop: '1rem' }}>Loading final results...</Typography>
+      </div>
+    );
   }
 
   const renderFeedback = (feedback: Feedback | undefined) => {
