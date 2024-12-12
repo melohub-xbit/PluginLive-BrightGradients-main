@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Feedback } from "../context/QuizContext";
 
 interface HistoryItem {
-  quizID: number;
+  quizID: string;
   question: string;
   videoURL: string;
   feedback: Feedback;
@@ -52,7 +52,7 @@ const History: React.FC = () => {
     
     return Object.entries(historyData).flatMap(([quizId, questions]) =>
       Object.entries(questions).map(([question, [videoURL, feedback]]) => ({
-        quizID: parseInt(quizId),
+        quizID: quizId.split('-')[0],
         question,
         videoURL,
         feedback

@@ -122,7 +122,7 @@ Identify how well they express personal and professional values, resilience, and
     return {"questions": questions, "quiz_id": quiz_id}
 
 class FinalFeedbackRequest(BaseModel):
-    feedbackWithQuestions: dict
+    feedbackWithQuestions: List[dict]
     currentQuizId: str
 
 @router_record.post("/final-feedback")
@@ -132,7 +132,7 @@ async def final_feedback(
 ):
     try:
         response = get_final_summary(feedbacks=request.feedbackWithQuestions)
-        print(request.currentQuizId)
+        await Database.save_final_feedbacks(response, current_user["_id"], request.currentQuizId)
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
