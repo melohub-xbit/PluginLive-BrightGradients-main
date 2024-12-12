@@ -1,6 +1,13 @@
 import React, { useState } from "react";
+import { Feedback } from "../context/QuizContext";
+
+
+interface Feedbacks{
+  feedback: Feedback;
+}
 
 const CreatePlan: React.FC = () => {
+  const [pastFeedbacks, setPastFeedbacks] = useState<Feedbacks[]>([]);
   const [prompt, setPrompt] = useState("");
   const [generatedPlan, setGeneratedPlan] = useState<string | null>(null);
 
@@ -33,11 +40,30 @@ const CreatePlan: React.FC = () => {
 - Video tutorials`;
 
   const handleGenerateFromHistory = () => {
-    setGeneratedPlan(dummyMarkdown);
+    // setGeneratedPlan(dummyMarkdown);
+
   };
 
   const handlePromptSubmit = () => {
     setGeneratedPlan(dummyMarkdown);
+  };
+
+  const fetchHistory = async () => {
+    console.log("fetching history");
+    try {
+      const token  = localStorage.getItem("token");
+      const response = await fetch("http://localhost:8000/history", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch history");
+      }
+      const data = await response.json();
+    } catch (error) {
+      console.error("Error fetching history:", error);
+    }
   };
 
   const downloadPlan = () => {
@@ -56,7 +82,7 @@ const CreatePlan: React.FC = () => {
     <div className="min-h-screen w-full bg-gradient-to-b from-slate-900 to-slate-800 text-white p-8">
       <div className="w-full max-w-7xl mx-auto">
         <h1 className="text-5xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
-          Create Your Communication Plan
+          Create Your Learning Plan
         </h1>
 
         <div className="space-y-6 mb-12">
