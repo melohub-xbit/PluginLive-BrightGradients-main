@@ -202,6 +202,7 @@ async def get_final_feedbacks(
 class DownloadReportRequest(BaseModel):
     feedbackData: dict
     feedbacks: List[dict]
+    questions: List[str]
 
 @router_record.post("/download_report")
 async def download_report(
@@ -210,7 +211,7 @@ async def download_report(
 ):
     try:
         graph_from_gemini = get_graph_data(request.feedbacks)
-        pdf_path = generate_feedback_report(request.feedbackData, graph_from_gemini, current_user["full_name"], "assessment_report.pdf")
+        pdf_path = generate_feedback_report(request.feedbackData, request.feedbacks, request.questions, graph_from_gemini, current_user["full_name"], "assessment_report.pdf")
 
         return FileResponse(
             path=pdf_path,

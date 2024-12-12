@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuiz } from "../context/QuizContext";
 import { format } from "date-fns";
+import { useAuth } from "../context/AuthContext";
 
 interface ActionableRecommendation {
   reason: string;
@@ -53,6 +54,7 @@ export interface FinalFeedback {
 
 const Results = () => {
   const { questions, finalFeedback, feedbacks } = useQuiz();
+  const { user } = useAuth();
   const currentDate = format(new Date(), "dd-MMM-yyyy");
   const [downloading, setDownloading] = useState(false);
 
@@ -71,6 +73,7 @@ const Results = () => {
         body: JSON.stringify({
           feedbackData,
           feedbacks: [...Object.values(feedbacks)],
+          questions,
         }),
       });
 
@@ -96,8 +99,6 @@ const Results = () => {
     await downloadReport(finalFeedback);
   };
 
-  // Dummy data for demonstration (replace with actual user data)
-  const userName = "Sunhit Goswami";
   const renderFeedback = (feedback: FinalFeedback | null, index: number) => {
     if (!feedback) {
       return <p>No feedback available for this question.</p>;
@@ -180,7 +181,7 @@ const Results = () => {
       </button>
 
       <div className="max-w-3xl mx-auto bg-slate-800 p-8 rounded-xl shadow-lg">
-        <p className="mb-4">Candidate: {userName}</p>
+        <p className="mb-4">Candidate: {user?.full_name}</p>
         <p className="mb-8">Date: {currentDate}</p>
 
         {/* {renderFeedback(finalFeedback, 0)} */}

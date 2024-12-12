@@ -2,7 +2,7 @@ import { Feedback, useQuiz } from "../context/QuizContext";
 import { motion } from "framer-motion";
 import Recorder from "../components/Recorder";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Quiz = () => {
   const navigate = useNavigate();
@@ -20,6 +20,10 @@ const Quiz = () => {
   const [loadingFinalResults, setLoadingFinalResults] = useState(false);
 
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
+
+  if (questions.length === 0) {
+    return <Navigate to="/" replace />;
+  }
 
   const handleQuestionChange = (index: number) => {
     if (index <= answeredQuestions) {
@@ -238,25 +242,6 @@ const Quiz = () => {
             </div>
           </motion.div>
         )}
-
-        <motion.div
-          initial={{ x: -20 }}
-          animate={{ x: 0 }}
-          transition={{ delay: 0.6 }}
-          className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 hover:border-cyan-500/30 transition-colors"
-        >
-          <h3 className="text-sm text-cyan-400 mb-2">Summary</h3>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <span className="text-emerald-400">Strengths</span>
-              <p className="text-slate-300">Correct grammar and structure</p>
-            </div>
-            <div>
-              <span className="text-amber-400">Improvements</span>
-              <p className="text-slate-300">Build confidence and gestures</p>
-            </div>
-          </div>
-        </motion.div>
       </motion.div>
     );
   };

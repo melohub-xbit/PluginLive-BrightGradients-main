@@ -34,7 +34,7 @@ def create_parameter_graphs(graph_data):
     
     return graphs
 
-def generate_feedback_report(final_feedback_data, graph_data, name, output_path="assessment_report.pdf"):
+def generate_feedback_report(final_feedback_data, feedbacks, questions, graph_data, name, output_path):
     doc = SimpleDocTemplate(
         output_path,
         pagesize=letter,
@@ -144,10 +144,16 @@ def generate_feedback_report(final_feedback_data, graph_data, name, output_path=
         elements.append(Paragraph(f"{i}. {rec['recommendation']}", styles['Normal']))
         elements.append(Paragraph(f"   Reason: {rec['reason']}", styles['Italic']))
         elements.append(Spacer(1, 10))
-    
+
     # Graphs
     elements.append(Paragraph("Performance Trends", heading_style))
     elements.append(Spacer(1, 10))
+
+    
+    # Add note about graph scoring scale
+    elements.append(Paragraph("Note: All parameters are scored on a scale of 0-5", styles['Italic']))
+    elements.append(Spacer(1, 10))
+    
     
     graph_files = create_parameter_graphs(graph_data)
     
@@ -173,6 +179,55 @@ def generate_feedback_report(final_feedback_data, graph_data, name, output_path=
     
     elements.append(graph_table)
     
+    # Individual Question Feedbacks
+    elements.append(Paragraph("Individual Question Analysis", heading_style))
+    elements.append(Spacer(1, 10))
+
+    for i, (feedback, question) in enumerate(zip(feedbacks, questions), 1):
+        # Question Header
+        elements.append(Paragraph(f"Question {i}: {question}", styles['Heading3']))
+        elements.append(Spacer(1, 5))
+        
+        # Create feedback table data
+        feedback_data = [
+            ['Aspect', 'Details'],
+            ['Response Transcript', Paragraph(feedback.get('transcript', ''), cell_style)],
+            ['Summary', Paragraph(feedback.get('general_feedback', ''), cell_style)],
+            ['Speaking Rate', Paragraph(f"Rate: {feedback.get('speaking_rate', {}).get('rate', '')}\n{feedback.get('speaking_rate', {}).get('comment', '')}", cell_style)],
+            ['Pause Pattern', Paragraph(f"Count: {feedback.get('pause_pattern', {}).get('count', '')}\n{feedback.get('pause_pattern', {}).get('comment', '')}", cell_style)],
+            ['Filler Words', Paragraph(f"Count: {feedback.get('filler_word_usage', {}).get('count', '')}\n{feedback.get('filler_word_usage', {}).get('comment', '')}", cell_style)],
+            ['Grammar & Structure', Paragraph(feedback.get('sentence_structuring_and_grammar', ''), cell_style)],
+            ['Advanced Parameters', Paragraph(
+                f"Articulation: {feedback.get('advanced_parameters', {}).get('articulation', '')}\n"
+                f"Enunciation: {feedback.get('advanced_parameters', {}).get('enunciation', '')}\n"
+                f"Intelligibility: {feedback.get('advanced_parameters', {}).get('intelligibility', '')}\n"
+                f"Tone: {feedback.get('advanced_parameters', {}).get('tone', '')}", 
+                cell_style
+            )],
+            ['Timestamped Feedback', Paragraph('\n'.join([
+                f"[{item['time']}] {item['feedback']}" 
+                for item in feedback.get('timestamped_feedback', [])
+            ]), cell_style)]
+        ]
+        
+        # Create and style the feedback table
+        feedback_table = Table(feedback_data, colWidths=[1.5*inch, 5*inch])
+        feedback_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2C3E50')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 12),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+            ('TOPPADDING', (0, 0), (-1, -1), 12),
+            ('LEFTPADDING', (0, 0), (-1, -1), 8),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ]))
+        
+        elements.append(feedback_table)
+        elements.append(Spacer(1, 20))
+
     # Build PDF and cleanup
     doc.build(elements)
     for graph_file in graph_files:

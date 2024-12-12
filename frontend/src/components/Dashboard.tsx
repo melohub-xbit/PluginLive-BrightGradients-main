@@ -24,8 +24,8 @@ const Dashboard = ({ userData }: { userData: User }) => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
       const data = await response.json();
 
@@ -49,7 +49,7 @@ const Dashboard = ({ userData }: { userData: User }) => {
           className="bg-gradient-to-r from-slate-900 to-slate-800 p-8 rounded-2xl shadow-xl border border-slate-700"
         >
           <h1 className="text-4xl font-bold text-white mb-4">
-            Welcome to Your Eloquence, {userData.username}
+            Welcome to Your Eloquence, {userData.full_name}
           </h1>
           <p className="text-xl text-slate-300">
             Enhance your communication skills with AI-powered assessments and
