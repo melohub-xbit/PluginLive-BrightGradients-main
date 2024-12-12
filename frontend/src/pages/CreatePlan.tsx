@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { Feedback } from "../context/QuizContext";
+// import { Feedback } from "../context/QuizContext";
 
-interface Feedbacks {
-  feedback: Feedback;
-}
+// interface Feedbacks {
+//   feedback: Feedback;
+// }
 
 const CreatePlan: React.FC = () => {
-  const [pastFeedbacks, setPastFeedbacks] = useState<Feedbacks[]>([]);
+  // const [pastFeedbacks, setPastFeedbacks] = useState<Feedbacks[]>([]);
   const [prompt, setPrompt] = useState("");
   const [generatedPlan, setGeneratedPlan] = useState<string | null>(null);
 
@@ -46,26 +46,26 @@ const CreatePlan: React.FC = () => {
     setGeneratedPlan(dummyMarkdown);
   };
 
-  const fetchHistory = async () => {
-    console.log("fetching history");
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `${import.meta.env.VITE_APP_BACKEND_URL}/history`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch history");
-      }
-      const data = await response.json();
-    } catch (error) {
-      console.error("Error fetching history:", error);
-    }
-  };
+  // const fetchHistory = async () => {
+  //   console.log("fetching history");
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     const response = await fetch(
+  //       `${import.meta.env.VITE_APP_BACKEND_URL}/history`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch history");
+  //     }
+  //     const data = await response.json();
+  //   } catch (error) {
+  //     console.error("Error fetching history:", error);
+  //   }
+  // };
 
   const downloadPlan = () => {
     const blob = new Blob([generatedPlan || ""], { type: "text/markdown" });

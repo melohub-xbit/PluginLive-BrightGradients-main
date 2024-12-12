@@ -6,7 +6,7 @@ import { User } from "../context/AuthContext";
 
 const Dashboard = ({ userData }: { userData: User }) => {
   const navigate = useNavigate();
-  const { setQuestions, setFeedbacks, setQuizId, currentQuizId } = useQuiz();
+  const { setQuestions, setFeedbacks, setQuizId } = useQuiz();
   const [loadingQues, setLoadingQues] = useState(false);
 
   const handleStartAssessment = async () => {

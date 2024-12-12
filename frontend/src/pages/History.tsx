@@ -201,68 +201,68 @@ const History: React.FC = () => {
     </button>
   );
 
-  const renderFinalFeedbackCard = (feedbackId: string, feedback: any) => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-slate-800 rounded-xl p-6 shadow-lg hover:shadow-cyan-500/10 transition-shadow"
-    >
-      <h3 className="text-xl font-bold mb-4 text-cyan-400">Feedback Summary</h3>
+  // const renderFinalFeedbackCard = (feedbackId: string, feedback: any) => (
+  //   <motion.div
+  //     initial={{ opacity: 0, y: 20 }}
+  //     animate={{ opacity: 1, y: 0 }}
+  //     className="bg-slate-800 rounded-xl p-6 shadow-lg hover:shadow-cyan-500/10 transition-shadow"
+  //   >
+  //     <h3 className="text-xl font-bold mb-4 text-cyan-400">Feedback Summary</h3>
 
-      <div className="space-y-4">
-        <div>
-          <h4 className="font-semibold text-cyan-400">Overall Feedback</h4>
-          <p className="text-white mt-2">{feedback.overall_feedback.summary}</p>
-        </div>
+  //     <div className="space-y-4">
+  //       <div>
+  //         <h4 className="font-semibold text-cyan-400">Overall Feedback</h4>
+  //         <p className="text-white mt-2">{feedback.overall_feedback.summary}</p>
+  //       </div>
 
-        <div>
-          <h4 className="font-semibold text-cyan-400">Key Strengths</h4>
-          <p className="text-white mt-2">
-            {feedback.overall_feedback.key_strengths}
-          </p>
-        </div>
+  //       <div>
+  //         <h4 className="font-semibold text-cyan-400">Key Strengths</h4>
+  //         <p className="text-white mt-2">
+  //           {feedback.overall_feedback.key_strengths}
+  //         </p>
+  //       </div>
 
-        <div>
-          <h4 className="font-semibold text-cyan-400">Areas of Improvement</h4>
-          <p className="text-white mt-2">
-            {feedback.overall_feedback.areas_of_improvement}
-          </p>
-        </div>
+  //       <div>
+  //         <h4 className="font-semibold text-cyan-400">Areas of Improvement</h4>
+  //         <p className="text-white mt-2">
+  //           {feedback.overall_feedback.areas_of_improvement}
+  //         </p>
+  //       </div>
 
-        <div>
-          <h4 className="font-semibold text-cyan-400">Speaking Metrics</h4>
-          <div className="grid grid-cols-2 gap-4 mt-2">
-            <div className="bg-slate-700 p-3 rounded">
-              <p className="text-cyan-300">Speaking Rate</p>
-              <p className="text-sm text-white">
-                {feedback.advanced.speaking_rate.comment}
-              </p>
-            </div>
-            <div className="bg-slate-700 p-3 rounded">
-              <p className="text-cyan-300">Filler Words</p>
-              <p className="text-sm text-white">
-                {feedback.advanced.filler_word_usage.comment}
-              </p>
-            </div>
-          </div>
-        </div>
+  //       <div>
+  //         <h4 className="font-semibold text-cyan-400">Speaking Metrics</h4>
+  //         <div className="grid grid-cols-2 gap-4 mt-2">
+  //           <div className="bg-slate-700 p-3 rounded">
+  //             <p className="text-cyan-300">Speaking Rate</p>
+  //             <p className="text-sm text-white">
+  //               {feedback.advanced.speaking_rate.comment}
+  //             </p>
+  //           </div>
+  //           <div className="bg-slate-700 p-3 rounded">
+  //             <p className="text-cyan-300">Filler Words</p>
+  //             <p className="text-sm text-white">
+  //               {feedback.advanced.filler_word_usage.comment}
+  //             </p>
+  //           </div>
+  //         </div>
+  //       </div>
 
-        <div>
-          <h4 className="font-semibold text-cyan-400">Recommendations</h4>
-          <div className="space-y-2 mt-2">
-            {feedback.advanced.actionable_recommendations.map(
-              (rec: ActionableRecommendation, index: number) => (
-                <div key={index} className="bg-slate-700 p-3 rounded">
-                  <p className="text-white">{rec.recommendation}</p>
-                  <p className="text-sm text-gray-400 mt-1">{rec.reason}</p>
-                </div>
-              )
-            )}
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
+  //       <div>
+  //         <h4 className="font-semibold text-cyan-400">Recommendations</h4>
+  //         <div className="space-y-2 mt-2">
+  //           {feedback.advanced.actionable_recommendations.map(
+  //             (rec: ActionableRecommendation, index: number) => (
+  //               <div key={index} className="bg-slate-700 p-3 rounded">
+  //                 <p className="text-white">{rec.recommendation}</p>
+  //                 <p className="text-sm text-gray-400 mt-1">{rec.reason}</p>
+  //               </div>
+  //             )
+  //           )}
+  //         </div>
+  //       </div>
+  //     </div>
+  //   </motion.div>
+  // );
 
   const renderFeedbackModal = (feedback: Feedback) => (
     <motion.div
@@ -333,7 +333,7 @@ const History: React.FC = () => {
     </motion.div>
   );
 
-  const renderDetailedFeedbackModal = (feedbackId: string, feedback: any) => (
+  const renderDetailedFeedbackModal = (feedback: any) => (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -536,7 +536,6 @@ const History: React.FC = () => {
       <AnimatePresence>
         {selectedFinalFeedback &&
           renderDetailedFeedbackModal(
-            selectedFinalFeedback.id,
             selectedFinalFeedback.feedback
           )}
       </AnimatePresence>
