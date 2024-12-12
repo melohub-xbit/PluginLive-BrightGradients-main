@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import Webcam from "react-webcam";
 import { motion } from "framer-motion";
 import { Feedback, useQuiz } from "../context/QuizContext";
+import toast from "react-hot-toast";
 
 interface RecorderProps {
   questionIndex: number;
@@ -73,6 +74,7 @@ const Recorder: React.FC<RecorderProps> = ({ questionIndex, onComplete }) => {
   const handleSubmit = async () => {
     if (recordedChunks.length) {
       setUploading(true);
+      toast("Uploading video...");
       try {
         const blob = new Blob(recordedChunks, {
           type: "video/webm",
@@ -102,7 +104,7 @@ const Recorder: React.FC<RecorderProps> = ({ questionIndex, onComplete }) => {
         );
 
         if (response.ok) {
-          alert("Video uploaded successfully!");
+          toast.success("Video uploaded successfully!");
           // Reset states
           setVideoURL("");
           setRecordedChunks([]);
@@ -118,7 +120,7 @@ const Recorder: React.FC<RecorderProps> = ({ questionIndex, onComplete }) => {
         }
       } catch (error) {
         console.error("Upload failed:", error);
-        alert("Video upload failed. Please try again.");
+        toast.error("Failed to upload video. Please try again.");
       } finally {
         setUploading(false);
       }

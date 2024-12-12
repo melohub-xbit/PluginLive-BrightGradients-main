@@ -5,11 +5,15 @@ import { useAuth } from "../context/AuthContext";
 
 const SignIn = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
   });
+
+  if (isAuthenticated) {
+    navigate("/");
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

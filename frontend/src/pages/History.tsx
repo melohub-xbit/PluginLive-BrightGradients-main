@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Feedback } from "../context/QuizContext";
+import toast from "react-hot-toast";
 
 interface HistoryItem {
   quizID: string;
@@ -99,6 +100,7 @@ const History: React.FC = () => {
       setFinalFeedbacks(data);
     } catch (error) {
       console.error("Error fetching feedbacks:", error);
+      toast.error("Failed to fetch feedbacks");
     } finally {
       setIsFeedbacksLoading(false);
     }
@@ -106,6 +108,7 @@ const History: React.FC = () => {
 
   const fetchHistory = async () => {
     setIsHistoryLoading(true);
+    toast("Fetching history...", { duration: 800 });
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
@@ -121,8 +124,10 @@ const History: React.FC = () => {
       }
       const data = await response.json();
       setHistory(data);
+      toast.success("History fetched successfully!");
     } catch (error) {
       console.error("Error fetching history:", error);
+      toast.error("Failed to fetch history");
     } finally {
       setIsHistoryLoading(false);
     }
