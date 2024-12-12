@@ -55,14 +55,9 @@ class Database:
     
     @classmethod
     def add_empty_dict(cls, username:str):
-        user_dict = {}
         cls.user_collection.update_one(
             {"username": username},
-            {"$set": {"answers": {}}}
-        )
-        cls.user_collection.update_one(
-            {"username": username},
-            {"$set": {"feedbacks": {}}}
+            {"$set": {"history": {}}}
         )
 
     @classmethod
@@ -95,5 +90,14 @@ class Database:
             print(f"Upload error: {str(e)}")
             raise e
 
+    @classmethod
+    async def save_history(cls, user_id: str, video: str, feedback: str, question: str, quiz_id: str):
+        #add {quiz_id:{question:(video, feedback)}} to history
+        await cls.user_collection.update_one(
+            {"_id": user_id},
+            {"$set": {f"history.{quiz_id}.{question}": [video, feedback]}}
+        )
 
+        
+        
 

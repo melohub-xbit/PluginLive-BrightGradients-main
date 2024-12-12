@@ -11,6 +11,7 @@ import io
 from typing import List
 from pydantic import BaseModel
 from assessment.nonverbal import CommunicationAnalyzer
+from uuid import uuid4
 
 class FeedbackItem(BaseModel):
     question: str
@@ -132,6 +133,7 @@ async def save_video(
     video_file: UploadFile = File(...),
     audio_file: UploadFile = File(...),
     question: str = Form(...),
+    quiz_id: str = Form(...),
     current_user: dict = Depends(get_current_user)
 ):
     video_data = {
@@ -158,5 +160,11 @@ async def save_video(
     # print(non_verbal_feedback)
 
     result = await Database.save_video(video_data)
+
+    vidUrl = result["url"]
+
+    await Database.save_history(get_current_user["_id"], vidUrl, candidate_assess, question, quiz_id)
+
+    #give dict of question:video and question:feedback to Database functions
     
     return {"url": result["url"], "feedback": candidate_assess}
