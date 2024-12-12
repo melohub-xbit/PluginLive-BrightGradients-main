@@ -18,7 +18,7 @@ const Recorder: React.FC<RecorderProps> = ({ questionIndex, onComplete }) => {
   const [cameraActive, setCameraActive] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [showSubmit, setShowSubmit] = useState(false);
-  const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
+  const [audioStream] = useState<MediaStream | null>(null);
   const { setFeedback, incrementAnsweredQuestions, questions, currentQuizId } =
     useQuiz();
 

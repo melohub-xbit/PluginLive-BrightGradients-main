@@ -102,73 +102,73 @@ const Results = () => {
     await downloadReport(finalFeedback);
   };
 
-  const renderFeedback = (feedback: FinalFeedback | null, index: number) => {
-    if (!feedback) {
-      return <p>No feedback available for this question.</p>;
-    }
+  // const renderFeedback = (feedback: FinalFeedback | null, index: number) => {
+  //   if (!feedback) {
+  //     return <p>No feedback available for this question.</p>;
+  //   }
 
-    const { advanced, overall_feedback } = feedback;
+  //   const { advanced, overall_feedback } = feedback;
 
-    return (
-      <div key={index} className="mb-8">
-        <h3 className="text-xl font-medium mb-2">
-          Question {index + 1}: {questions[index]}
-        </h3>
+  //   return (
+  //     <div key={index} className="mb-8">
+  //       <h3 className="text-xl font-medium mb-2">
+  //         Question {index + 1}: {questions[index]}
+  //       </h3>
 
-        <div className="mb-4">
-          <p className="font-semibold">Overall Feedback:</p>
-          <p>{overall_feedback.summary}</p>
-          <p>Key Strengths: {overall_feedback.key_strengths}</p>
-          <p>Areas of Improvement: {overall_feedback.areas_of_improvement}</p>
-        </div>
+  //       <div className="mb-4">
+  //         <p className="font-semibold">Overall Feedback:</p>
+  //         <p>{overall_feedback.summary}</p>
+  //         <p>Key Strengths: {overall_feedback.key_strengths}</p>
+  //         <p>Areas of Improvement: {overall_feedback.areas_of_improvement}</p>
+  //       </div>
 
-        <div className="mb-4">
-          <p className="font-semibold">Verbal Analysis:</p>
-          <p>Articulation: {advanced.articulation}</p>
-          <p>Enunciation: {advanced.enunciation}</p>
-          <p>Tone: {advanced.tone}</p>
-          <p>
-            Grammar & Structure: {advanced.sentence_structuring_and_grammar}
-          </p>
-          <p>Speaking Rate: {advanced.speaking_rate.comment}</p>
-          <p>Filler Words: {advanced.filler_word_usage.comment}</p>
-          <p>Pause Patterns: {advanced.pause_pattern.comment}</p>
-          <p>Intelligibility: {advanced.intelligibility}</p>
+  //       <div className="mb-4">
+  //         <p className="font-semibold">Verbal Analysis:</p>
+  //         <p>Articulation: {advanced.articulation}</p>
+  //         <p>Enunciation: {advanced.enunciation}</p>
+  //         <p>Tone: {advanced.tone}</p>
+  //         <p>
+  //           Grammar & Structure: {advanced.sentence_structuring_and_grammar}
+  //         </p>
+  //         <p>Speaking Rate: {advanced.speaking_rate.comment}</p>
+  //         <p>Filler Words: {advanced.filler_word_usage.comment}</p>
+  //         <p>Pause Patterns: {advanced.pause_pattern.comment}</p>
+  //         <p>Intelligibility: {advanced.intelligibility}</p>
 
-          <p className="font-semibold">Actionable Recommendations:</p>
-          <ul>
-            {advanced.actionable_recommendations.map((rec, i) => (
-              <li key={i}>
-                <strong>Recommendation:</strong> {rec.recommendation}
-                <br />
-                <strong>Reason:</strong> {rec.reason}
-              </li>
-            ))}
-          </ul>
+  //         <p className="font-semibold">Actionable Recommendations:</p>
+  //         <ul>
+  //           {advanced.actionable_recommendations.map((rec, i) => (
+  //             <li key={i}>
+  //               <strong>Recommendation:</strong> {rec.recommendation}
+  //               <br />
+  //               <strong>Reason:</strong> {rec.reason}
+  //             </li>
+  //           ))}
+  //         </ul>
 
-          <p className="font-semibold">Personalized Examples:</p>
-          <ul>
-            {advanced.personalized_examples.map((ex, i) => (
-              <li key={i}>
-                <strong>Line:</strong> {ex.line}
-                <br />
-                <strong>Feedback:</strong> {ex.feedback}
-              </li>
-            ))}
-          </ul>
-        </div>
+  //         <p className="font-semibold">Personalized Examples:</p>
+  //         <ul>
+  //           {advanced.personalized_examples.map((ex, i) => (
+  //             <li key={i}>
+  //               <strong>Line:</strong> {ex.line}
+  //               <br />
+  //               <strong>Feedback:</strong> {ex.feedback}
+  //             </li>
+  //           ))}
+  //         </ul>
+  //       </div>
 
-        {/* Non-verbal analysis (using dummy data for now) */}
-        <div>
-          <p className="font-semibold">Non-Verbal Analysis:</p>
-          <p>Posture: Work on maintaining a more consistent posture.</p>
-          <p>Gestures: Use more expressive hand gestures.</p>
-          <p>Eye Contact: Improve eye contact to enhance engagement.</p>
-          <p>Speech Clarity: Focus on clarity and articulation.</p>
-        </div>
-      </div>
-    );
-  };
+  //       {/* Non-verbal analysis (using dummy data for now) */}
+  //       <div>
+  //         <p className="font-semibold">Non-Verbal Analysis:</p>
+  //         <p>Posture: Work on maintaining a more consistent posture.</p>
+  //         <p>Gestures: Use more expressive hand gestures.</p>
+  //         <p>Eye Contact: Improve eye contact to enhance engagement.</p>
+  //         <p>Speech Clarity: Focus on clarity and articulation.</p>
+  //       </div>
+  //     </div>
+  //   );
+  // };
 
   return (
     <div className="h-screen bg-slate-900 text-white p-8 w-screen">
