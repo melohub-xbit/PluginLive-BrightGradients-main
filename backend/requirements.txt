@@ -127,7 +127,6 @@ python-ffmpeg
 python-jose
 python-multipart
 pytz
-pywin32
 PyYAML
 pyzmq
 referencing
