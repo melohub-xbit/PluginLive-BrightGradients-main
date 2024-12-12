@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuiz } from "../context/QuizContext";
 import { format } from "date-fns";
 import { useAuth } from "../context/AuthContext";
-import { motion, AnimatePresence } from "framer-motion"; // Import necessary components
+import { motion, AnimatePresence } from "framer-motion";
 
 
 interface ActionableRecommendation {
@@ -117,25 +117,83 @@ const Results = () => {
         initial={{ scale: 0.95 }}
         animate={{ scale: 1 }}
         exit={{ scale: 0.95 }}
-        className="bg-slate-800 p-8 rounded-xl max-w-2xl max-h-[80vh] overflow-y-auto m-4 relative" // Added relative for close button positioning
+        className="bg-slate-800 p-8 rounded-xl max-w-2xl max-h-[80vh] overflow-y-auto m-4 relative"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close button */}
         <button
           className="absolute top-2 right-2 text-white hover:text-gray-400"
           onClick={() => setShowFullFeedback(false)}
         >
-          &times; {/* Close symbol */}
+          &times;
         </button>
-
+  
         <h3 className="text-xl font-bold mb-4 text-cyan-400">Detailed Feedback</h3>
-        {/* ... (Rest of the detailed feedback content from History.tsx, adapted for FinalFeedback) */}
-          <pre className="text-white whitespace-pre-wrap">{JSON.stringify(feedback, null, 2)}</pre>
-
-
+  
+        <div className="space-y-4">
+          <div>
+            <h4 className="font-semibold text-cyan-400">Overall Feedback</h4>
+            <p className="text-white mt-2">
+              {feedback.overall_feedback.summary}
+            </p>
+          </div>
+  
+          <div>
+            <h4 className="font-semibold text-cyan-400">Key Strengths</h4>
+            <p className="text-white mt-2">
+              {feedback.overall_feedback.key_strengths}
+            </p>
+          </div>
+  
+          <div>
+            <h4 className="font-semibold text-cyan-400">Areas of Improvement</h4>
+            <p className="text-white mt-2">
+              {feedback.overall_feedback.areas_of_improvement}
+            </p>
+          </div>
+  
+          <div>
+            <h4 className="font-semibold text-cyan-400">Speaking Metrics</h4>
+            <div className="grid grid-cols-2 gap-4 mt-2">
+              <div className="bg-slate-700 p-3 rounded">
+                <p className="text-cyan-300">Speaking Rate</p>
+                <p className="text-sm text-white">
+                  {feedback.advanced.speaking_rate.comment}
+                </p>
+              </div>
+              <div className="bg-slate-700 p-3 rounded">
+                <p className="text-cyan-300">Filler Words</p>
+                <p className="text-sm text-white">
+                  {feedback.advanced.filler_word_usage.comment}
+                </p>
+              </div>
+            </div>
+          </div>
+  
+          <div>
+            <h4 className="font-semibold text-cyan-400">Recommendations</h4>
+            <div className="space-y-2 mt-2">
+              {feedback.advanced.actionable_recommendations.map(
+                (rec, index) => (
+                  <div key={index} className="bg-slate-700 p-3 rounded">
+                    <p className="text-white">{rec.recommendation}</p>
+                    <p className="text-sm text-gray-400 mt-1">{rec.reason}</p>
+                  </div>
+                )
+              )}
+            </div>
+          </div>
+        </div>
+  
+        <button
+          className="mt-6 bg-cyan-500 px-4 py-2 rounded-lg hover:bg-cyan-600 transition-colors"
+          onClick={() => setShowFullFeedback(false)}
+        >
+          Close
+        </button>
       </motion.div>
     </motion.div>
   );
+  
 
   return (
     <div className="h-screen bg-slate-900 text-white p-8 w-screen">
