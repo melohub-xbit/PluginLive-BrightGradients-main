@@ -1,11 +1,9 @@
-import { useNavigate } from "react-router-dom";
 import { Feedback, useQuiz } from "../context/QuizContext";
 import { motion } from "framer-motion";
 import Recorder from "../components/Recorder";
 import { useState } from "react";
 
 const Quiz = () => {
-  const navigate = useNavigate();
   const {
     questions,
     currentQuestionIndex,
@@ -18,11 +16,6 @@ const Quiz = () => {
   const [loadingFinalResults, setLoadingFinalResults] = useState(false);
 
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
-
-  if (questions.length === 0) {
-    navigate("/");
-    return null;
-  }
 
   const handleQuestionChange = (index: number) => {
     if (index <= answeredQuestions) {

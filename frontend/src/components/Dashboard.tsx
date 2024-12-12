@@ -22,9 +22,8 @@ const Dashboard = ({ userData }: { userData: User }) => {
       const response = await fetch("http://localhost:8000/generate-questions");
       const data = await response.json();
 
-      console.log(data);
-      // setCurrentQuizId(data.questions.quizId);
-      // setQuestions([...data.questions.questions]);
+      setCurrentQuizId(data.quizId);
+      setQuestions([...data.questions.questions]);
       navigate("/quiz");
     } catch (error) {
       console.error("Failed to fetch questions:", error);
