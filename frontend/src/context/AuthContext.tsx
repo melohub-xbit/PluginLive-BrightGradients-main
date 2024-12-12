@@ -35,11 +35,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const response = await fetch("http://localhost:8000/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          `${import.meta.env.VITE_APP_BACKEND_URL}/me`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (response.ok) {
           const data = await response.json();
           setUser(data);
@@ -55,18 +58,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const login = async (credentials: { username: string; password: string }) => {
     try {
-      const response = await fetch("http://localhost:8000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credentials),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_APP_BACKEND_URL}/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(credentials),
+        }
+      );
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem("token", data.access_token);
 
-        const res = await fetch("http://localhost:8000/me", {
+        const res = await fetch(`${import.meta.env.VITE_APP_BACKEND_URL}/me`, {
           headers: {
             Authorization: `Bearer ${data.access_token}`,
           },
@@ -84,12 +90,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const logout = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8000/logout", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_APP_BACKEND_URL}/logout`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (response.ok) {
         localStorage.removeItem("token");
         setUser(null);

@@ -59,14 +59,17 @@ const Quiz = () => {
         currentQuizId,
       });
 
-      const response = await fetch("http://localhost:8000/final-feedback", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json", // Important: Set Content-Type
-          Authorization: `Bearer ${token}`,
-        },
-        body: requestBody,
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_APP_BACKEND_URL}/final-feedback`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Important: Set Content-Type
+            Authorization: `Bearer ${token}`,
+          },
+          body: requestBody,
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();

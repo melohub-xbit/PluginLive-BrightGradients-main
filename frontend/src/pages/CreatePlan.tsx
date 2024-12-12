@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Feedback } from "../context/QuizContext";
 
-
-interface Feedbacks{
+interface Feedbacks {
   feedback: Feedback;
 }
 
@@ -41,7 +40,6 @@ const CreatePlan: React.FC = () => {
 
   const handleGenerateFromHistory = () => {
     // setGeneratedPlan(dummyMarkdown);
-
   };
 
   const handlePromptSubmit = () => {
@@ -51,12 +49,15 @@ const CreatePlan: React.FC = () => {
   const fetchHistory = async () => {
     console.log("fetching history");
     try {
-      const token  = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8000/history", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${import.meta.env.VITE_APP_BACKEND_URL}/history`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch history");
       }

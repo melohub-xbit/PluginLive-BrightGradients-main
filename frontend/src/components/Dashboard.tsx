@@ -20,13 +20,16 @@ const Dashboard = ({ userData }: { userData: User }) => {
     try {
       // get all the questions here
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8000/generate-questions", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_APP_BACKEND_URL}/generate-questions`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       const data = await response.json();
 
       setQuizId(data.quiz_id);

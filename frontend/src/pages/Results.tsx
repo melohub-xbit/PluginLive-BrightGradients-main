@@ -64,18 +64,21 @@ const Results = () => {
     setDownloading(true);
 
     try {
-      const response = await fetch("http://localhost:8000/download_report", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          feedbackData,
-          feedbacks: [...Object.values(feedbacks)],
-          questions,
-        }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_APP_BACKEND_URL}/download_report`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            feedbackData,
+            feedbacks: [...Object.values(feedbacks)],
+            questions,
+          }),
+        }
+      );
 
       if (response.ok) {
         const blob = await response.blob();

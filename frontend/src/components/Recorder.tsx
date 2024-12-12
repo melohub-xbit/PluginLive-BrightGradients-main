@@ -90,13 +90,16 @@ const Recorder: React.FC<RecorderProps> = ({ questionIndex, onComplete }) => {
         formData.append("quiz_id", currentQuizId);
 
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:8000/save-video", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        });
+        const response = await fetch(
+          `${import.meta.env.VITE_APP_BACKEND_URL}/save-video`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          }
+        );
 
         if (response.ok) {
           alert("Video uploaded successfully!");
