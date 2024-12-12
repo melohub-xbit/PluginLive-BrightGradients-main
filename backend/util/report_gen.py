@@ -34,7 +34,7 @@ def create_parameter_graphs(graph_data):
     
     return graphs
 
-def generate_feedback_report(feedback_data, graph_data, output_path="interview_feedback_report.pdf"):
+def generate_feedback_report(final_feedback_data, graph_data, name, output_path="assessment_report.pdf"):
     doc = SimpleDocTemplate(
         output_path,
         pagesize=letter,
@@ -43,6 +43,8 @@ def generate_feedback_report(feedback_data, graph_data, output_path="interview_f
         topMargin=72,
         bottomMargin=72
     )
+    
+    doc.title = "Candidate Assessment Report"
     
     # Styles
     styles = getSampleStyleSheet()
@@ -67,22 +69,22 @@ def generate_feedback_report(feedback_data, graph_data, output_path="interview_f
     
     # Header
     elements.append(Paragraph("Candidate Assessment Report", title_style))
-    elements.append(Paragraph(f"Candidate Name: John Doe", styles['Normal']))
+    elements.append(Paragraph(f"Candidate Name: {name}", styles['Normal']))
     elements.append(Paragraph(f"Date: {datetime.now().strftime('%B %d, %Y')}", styles['Normal']))
     elements.append(Spacer(1, 20))
     
     # Overall Feedback
     elements.append(Paragraph("Overall Assessment", heading_style))
-    elements.append(Paragraph(f"Summary: {feedback_data['overall_feedback']['summary']}", styles['Normal']))
+    elements.append(Paragraph(f"Summary: {final_feedback_data['overall_feedback']['summary']}", styles['Normal']))
     elements.append(Spacer(1, 10))
     
     # Key Strengths and Areas of Improvement
     elements.append(Paragraph("Key Strengths:", styles['Heading3']))
-    elements.append(Paragraph(feedback_data['overall_feedback']['key_strengths'], styles['Normal']))
+    elements.append(Paragraph(final_feedback_data['overall_feedback']['key_strengths'], styles['Normal']))
     elements.append(Spacer(1, 10))
     
     elements.append(Paragraph("Areas of Improvement:", styles['Heading3']))
-    elements.append(Paragraph(feedback_data['overall_feedback']['areas_of_improvement'], styles['Normal']))
+    elements.append(Paragraph(final_feedback_data['overall_feedback']['areas_of_improvement'], styles['Normal']))
     elements.append(Spacer(1, 20))
     
     # Detailed Analysis
@@ -103,18 +105,18 @@ def generate_feedback_report(feedback_data, graph_data, output_path="interview_f
         ['Metric', 'Score', 'Comments'],
         [
             Paragraph('Speaking Rate', cell_style),
-            Paragraph(str(feedback_data['advanced']['speaking_rate']['rate']), cell_style),
-            Paragraph(feedback_data['advanced']['speaking_rate']['comment'], cell_style)
+            Paragraph(str(final_feedback_data['advanced']['speaking_rate']['rate']), cell_style),
+            Paragraph(final_feedback_data['advanced']['speaking_rate']['comment'], cell_style)
         ],
         [
             Paragraph('Filler Words', cell_style),
-            Paragraph(str(feedback_data['advanced']['filler_word_usage']['count']), cell_style),
-            Paragraph(feedback_data['advanced']['filler_word_usage']['comment'], cell_style)
+            Paragraph(str(final_feedback_data['advanced']['filler_word_usage']['count']), cell_style),
+            Paragraph(final_feedback_data['advanced']['filler_word_usage']['comment'], cell_style)
         ],
         [
             Paragraph('Pauses', cell_style),
-            Paragraph(str(feedback_data['advanced']['pause_pattern']['count']), cell_style),
-            Paragraph(feedback_data['advanced']['pause_pattern']['comment'], cell_style)
+            Paragraph(str(final_feedback_data['advanced']['pause_pattern']['count']), cell_style),
+            Paragraph(final_feedback_data['advanced']['pause_pattern']['comment'], cell_style)
         ]
     ]
     
@@ -138,7 +140,7 @@ def generate_feedback_report(feedback_data, graph_data, output_path="interview_f
     
     # Actionable Recommendations
     elements.append(Paragraph("Actionable Recommendations", heading_style))
-    for i, rec in enumerate(feedback_data['advanced']['actionable_recommendations'], 1):
+    for i, rec in enumerate(final_feedback_data['advanced']['actionable_recommendations'], 1):
         elements.append(Paragraph(f"{i}. {rec['recommendation']}", styles['Normal']))
         elements.append(Paragraph(f"   Reason: {rec['reason']}", styles['Italic']))
         elements.append(Spacer(1, 10))
@@ -148,18 +150,35 @@ def generate_feedback_report(feedback_data, graph_data, output_path="interview_f
     elements.append(Spacer(1, 10))
     
     graph_files = create_parameter_graphs(graph_data)
-    for graph_file in graph_files:
-        elements.append(Image(graph_file, width=6*inch, height=3*inch))
-        elements.append(Spacer(1, 10))
     
-    # Build PDF
+    # Create a 2-column table for graphs
+    graph_pairs = []
+    for i in range(0, len(graph_files), 2):
+        row = []
+        for j in range(2):
+            if i + j < len(graph_files):
+                row.append(Image(graph_files[i + j], width=3*inch, height=2*inch))
+            else:
+                row.append('')
+        graph_pairs.append(row)
+    
+    # Create table with proper spacing
+    graph_table = Table(graph_pairs, colWidths=[3.5*inch, 3.5*inch])
+    graph_table.setStyle(TableStyle([
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('TOPPADDING', (0, 0), (-1, -1), 20),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 20),
+    ]))
+    
+    elements.append(graph_table)
+    
+    # Build PDF and cleanup
     doc.build(elements)
-    
-    # Clean up temporary graph files
     for graph_file in graph_files:
         import os
         os.remove(graph_file)
-
+    
     return output_path
 
 test = {"advanced": {"actionable_recommendations": [{"reason": "Improving these aspects will create a more polished and professional communication style.", "recommendation": "Focus on reducing filler words, enhancing the clarity and conciseness of your responses, and providing specific examples to support your points."}, {"reason": "Consistent pacing and well-placed pauses will improve the flow and impact of your communication.", "recommendation": "Practice maintaining a consistent speaking pace and using pauses strategically for emphasis."}, {"reason": "Adding detail and quantifiable achievements will strengthen your responses.", "recommendation": "Whenever possible, quantify your achievements and provide specific details to illustrate your skills and experience."}], "articulation": "Generally clear, but inconsistencies exist across responses. Some sections were rushed, while others lacked necessary emphasis.", "enunciation": "Mostly clear, but some words were slurred or dropped, particularly during faster speaking segments.", "filler_word_usage": {"comment": "The frequency of filler words varied across responses, indicating inconsistency in preparation and delivery. Excessive filler words detract from professionalism.", "count": 10}, "intelligibility": "Responses were mostly intelligible. However, occasional mumbling or rushed speech impacted clarity.", "pause_pattern": {"comment": "The number and impact of pauses varied significantly depending on the question. Unintentional pauses can be disruptive, while strategically placed pauses enhance impact.", "count": 10}, "personalized_examples": [{"feedback": "Expand on your background with concrete examples. Instead of simply stating your position, describe specific projects or contributions that showcase your experience and skills.", "line": "I am an engineer at TechCorp"}, {"feedback": "Relate your skills directly to the job requirements. Provide evidence demonstrating how your skills and experiences align with the needs of the role.", "line": "I believe this role aligns with my skills"}, {"feedback": "Provide specific examples to substantiate your strengths, instead of simply listing them. Quantify your achievements.", "line": "My key strengths are problem-solving, team management, and adaptability."}], "speaking_rate": {"comment": "The speaking rate fluctuated considerably across the responses, sometimes being too fast, other times too slow. Consistent pacing is key for effective delivery.", "rate": 3}, "tone": "The tone varied from polite but lacking confidence to confident and professional. Maintaining a consistent confident tone throughout is vital for professional communication.", "sentence_structuring_and_grammar": "Basic grammar was mostly accurate, but sentence structure could be improved to be more varied and engaging. More complex and well-structured sentences would be beneficial."}, "overall_feedback": {"areas_of_improvement": "Reduce filler words, enhance sentence structure, maintain consistent speaking rate and confident tone, and provide specific examples to support claims.", "key_strengths": "Clear articulation in several responses, basic grammatical accuracy, ability to convey key information.", "summary": "The candidate demonstrates a baseline communication ability, but several significant areas require improvement for enhanced clarity and professionalism. Inconsistency across responses suggests a lack of consistent preparation and delivery."}}
@@ -174,6 +193,3 @@ graph_data = {
   "articulation": [2.3, 4, 3, 4.1, 3.3],
   "enunciation": [1.7, 4, 3.9, 2.4, 4],
 }
-
-generate_feedback_report(test, graph_data, "assessment_report.pdf")
-

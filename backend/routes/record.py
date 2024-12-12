@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, File, UploadFile, HTTPException
+from fastapi.responses import FileResponse
 from db.init_db import Database
 from .auth import get_current_user
 import google.generativeai as genai
@@ -12,6 +13,7 @@ from typing import List
 from pydantic import BaseModel
 from assessment.nonverbal import CommunicationAnalyzer
 from uuid import uuid4
+from util.report_gen import *
 
 class FeedbackItem(BaseModel):
     question: str
@@ -119,14 +121,18 @@ Identify how well they express personal and professional values, resilience, and
 
     return {"questions": questions, "quiz_id": quiz_id}
 
+class FinalFeedbackRequest(BaseModel):
+    feedbackWithQuestions: dict
+    currentQuizId: str
 
 @router_record.post("/final-feedback")
 async def final_feedback(
-    feedbacks: List[FeedbackItem],
+    request: FinalFeedbackRequest,
     current_user: dict = Depends(get_current_user)
 ):
     try:
-        response = get_final_summary(feedbacks=feedbacks)
+        response = get_final_summary(feedbacks=request.feedbackWithQuestions)
+        print(request.currentQuizId)
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -182,3 +188,25 @@ async def get_history(
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+class DownloadReportRequest(BaseModel):
+    feedbackData: dict
+    feedbacks: List[dict]
+
+@router_record.post("/download_report")
+async def download_report(
+    request: DownloadReportRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    try:
+        graph_from_gemini = get_graph_data(request.feedbacks)
+        pdf_path = generate_feedback_report(request.feedbackData, graph_from_gemini, current_user["full_name"], "assessment_report.pdf")
+
+        return FileResponse(
+            path=pdf_path,
+            filename="assessment_report.pdf",
+            media_type="application/pdf"
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    

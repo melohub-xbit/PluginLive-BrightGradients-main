@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from "react";
+import { FinalFeedback } from "../pages/Results";
 
 interface AdvancedParameters {
   articulation: string;
@@ -44,6 +45,7 @@ interface QuizContextType {
   feedbacks: Record<number, Feedback>;
   answeredQuestions: number;
   currentQuizId: string;
+  finalFeedback: FinalFeedback | null;
   incrementAnsweredQuestions: () => void;
   setQuestions: (questions: string[]) => void;
   setCurrentQuestionIndex: (index: number) => void;
@@ -51,12 +53,16 @@ interface QuizContextType {
   setFeedbacks: (feedbacks: Record<number, Feedback>) => void;
   setCurrentQuizId: (quizId: string) => void;
   setQuizId: (quizId: string) => void;
+  updateFinalFeedback: (feedback: FinalFeedback) => void;
 }
 
 const QuizContext = createContext<QuizContextType | undefined>(undefined);
 
 export const QuizProvider = ({ children }: { children: ReactNode }) => {
   const [currentQuizId, setCurrentQuizId] = useState<string>("");
+  const [finalFeedback, setFinalFeedback] = useState<FinalFeedback | null>(
+    null
+  );
   const [questions, setQuestions] = useState<string[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [feedbacks, setFeedbacks] = useState<Record<number, Feedback>>({});
@@ -70,6 +76,10 @@ export const QuizProvider = ({ children }: { children: ReactNode }) => {
     setFeedbacks((prev) => ({ ...prev, [questionIndex]: feedback }));
   };
 
+  const updateFinalFeedback = (feedback: FinalFeedback) => {
+    setFinalFeedback(feedback);
+  };
+
   const setQuizId = (quizId: string) => {
     setCurrentQuizId(quizId);
   };
@@ -78,6 +88,8 @@ export const QuizProvider = ({ children }: { children: ReactNode }) => {
     <QuizContext.Provider
       value={{
         currentQuizId,
+        finalFeedback,
+        updateFinalFeedback,
         setCurrentQuizId,
         setQuizId,
         questions,

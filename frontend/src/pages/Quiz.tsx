@@ -2,14 +2,18 @@ import { Feedback, useQuiz } from "../context/QuizContext";
 import { motion } from "framer-motion";
 import Recorder from "../components/Recorder";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Quiz = () => {
+  const navigate = useNavigate();
   const {
     questions,
     currentQuestionIndex,
     setCurrentQuestionIndex,
     feedbacks,
     answeredQuestions,
+    updateFinalFeedback,
+    currentQuizId,
   } = useQuiz();
   const [showRecorder, setShowRecorder] = useState(false);
   const [isNarrating, setIsNarrating] = useState(false);
@@ -46,19 +50,24 @@ const Quiz = () => {
         })
       );
 
+      const requestBody = JSON.stringify({
+        feedbackWithQuestions,
+        currentQuizId,
+      });
+
       const response = await fetch("http://localhost:8000/final-feedback", {
         method: "POST",
         headers: {
           "Content-Type": "application/json", // Important: Set Content-Type
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(feedbackWithQuestions),
+        body: requestBody,
       });
 
       if (response.ok) {
         const data = await response.json();
 
-        console.log(data);
+        updateFinalFeedback(data);
       }
     } catch (error) {
       console.error("Failed to fetch final results:", error);
@@ -66,7 +75,7 @@ const Quiz = () => {
       setLoadingFinalResults(false);
     }
 
-    // navigate("/results");
+    navigate("/results");
   };
 
   const handleNarration = () => {
@@ -93,7 +102,7 @@ const Quiz = () => {
     }
 
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4 }}
@@ -112,66 +121,85 @@ const Quiz = () => {
         )}
 
         <motion.div
-            initial={{ x: -20 }}
-            animate={{ x: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 hover:border-cyan-500/30 transition-colors"
-          >
-            <h3 className="text-sm text-cyan-400 mb-1">General Feedback</h3>
-            <p className="text-slate-300 text-sm">{feedback.general_feedback}</p>
+          initial={{ x: -20 }}
+          animate={{ x: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 hover:border-cyan-500/30 transition-colors"
+        >
+          <h3 className="text-sm text-cyan-400 mb-1">General Feedback</h3>
+          <p className="text-slate-300 text-sm">{feedback.general_feedback}</p>
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
-            <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 hover:border-cyan-500/30 transition-all hover:shadow-lg hover:shadow-cyan-500/10">
-              <h3 className="text-sm text-cyan-400 mb-4">Verbal Analysis</h3>
-              <div className="grid gap-3">
-                {/* Voice Quality Metrics */}
-                <div className="space-y-2">
-                  <h4 className="text-xs uppercase tracking-wider text-slate-400">Voice Quality</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="flex flex-col">
-                      <span className="text-slate-400 text-xs">Articulation</span>
-                      <span className="text-slate-200 text-sm font-medium">{feedback.advanced_parameters.articulation}</span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-slate-400 text-xs">Enunciation</span>
-                      <span className="text-slate-200 text-sm font-medium">{feedback.advanced_parameters.enunciation}</span>
-                    </div>
+          <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 hover:border-cyan-500/30 transition-all hover:shadow-lg hover:shadow-cyan-500/10">
+            <h3 className="text-sm text-cyan-400 mb-4">Verbal Analysis</h3>
+            <div className="grid gap-3">
+              {/* Voice Quality Metrics */}
+              <div className="space-y-2">
+                <h4 className="text-xs uppercase tracking-wider text-slate-400">
+                  Voice Quality
+                </h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col">
+                    <span className="text-slate-400 text-xs">Articulation</span>
+                    <span className="text-slate-200 text-sm font-medium">
+                      {feedback.advanced_parameters.articulation}
+                    </span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-slate-400 text-xs">Enunciation</span>
+                    <span className="text-slate-200 text-sm font-medium">
+                      {feedback.advanced_parameters.enunciation}
+                    </span>
                   </div>
                 </div>
+              </div>
 
-                {/* Speech Pattern Metrics */}
-                <div className="space-y-2">
-                  <h4 className="text-xs uppercase tracking-wider text-slate-400">Speech Pattern</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="flex flex-col">
-                      <span className="text-slate-400 text-xs">Tone</span>
-                      <span className="text-slate-200 text-sm font-medium">{feedback.advanced_parameters.tone}</span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-slate-400 text-xs">Grammar</span>
-                      <span className="text-slate-200 text-sm font-medium">{feedback.sentence_structuring_and_grammar}</span>
-                    </div>
+              {/* Speech Pattern Metrics */}
+              <div className="space-y-2">
+                <h4 className="text-xs uppercase tracking-wider text-slate-400">
+                  Speech Pattern
+                </h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col">
+                    <span className="text-slate-400 text-xs">Tone</span>
+                    <span className="text-slate-200 text-sm font-medium">
+                      {feedback.advanced_parameters.tone}
+                    </span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-slate-400 text-xs">Grammar</span>
+                    <span className="text-slate-200 text-sm font-medium">
+                      {feedback.sentence_structuring_and_grammar}
+                    </span>
                   </div>
                 </div>
+              </div>
 
-                {/* Additional Metrics */}
-                <div className="space-y-2">
-                  <h4 className="text-xs uppercase tracking-wider text-slate-400">Delivery</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="flex flex-col">
-                      <span className="text-slate-400 text-xs">Speaking Rate</span>
-                      <span className="text-slate-200 text-sm font-medium">{feedback.speaking_rate.comment}</span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-slate-400 text-xs">Filler Words</span>
-                      <span className="text-slate-200 text-sm font-medium">{feedback.filler_word_usage.comment}</span>
-                    </div>
+              {/* Additional Metrics */}
+              <div className="space-y-2">
+                <h4 className="text-xs uppercase tracking-wider text-slate-400">
+                  Delivery
+                </h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col">
+                    <span className="text-slate-400 text-xs">
+                      Speaking Rate
+                    </span>
+                    <span className="text-slate-200 text-sm font-medium">
+                      {feedback.speaking_rate.comment}
+                    </span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-slate-400 text-xs">Filler Words</span>
+                    <span className="text-slate-200 text-sm font-medium">
+                      {feedback.filler_word_usage.comment}
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
-
+          </div>
 
           <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 hover:border-cyan-500/30 transition-all hover:shadow-lg hover:shadow-cyan-500/10">
             <h3 className="text-sm text-cyan-400 mb-2">Non-Verbal Analysis</h3>
@@ -212,11 +240,11 @@ const Quiz = () => {
         )}
 
         <motion.div
-            initial={{ x: -20 }}
-            animate={{ x: 0 }}
-            transition={{ delay: 0.6 }}
-            className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 hover:border-cyan-500/30 transition-colors"
-          >
+          initial={{ x: -20 }}
+          animate={{ x: 0 }}
+          transition={{ delay: 0.6 }}
+          className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 hover:border-cyan-500/30 transition-colors"
+        >
           <h3 className="text-sm text-cyan-400 mb-2">Summary</h3>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
@@ -230,8 +258,6 @@ const Quiz = () => {
           </div>
         </motion.div>
       </motion.div>
-
-
     );
   };
 
@@ -264,11 +290,11 @@ const Quiz = () => {
       </div>
 
       <motion.div
-         key={currentQuestionIndex}
-         initial={{ opacity: 0, y: 20 }}
-         animate={{ opacity: 1, y: 0 }}
-         transition={{ duration: 0.5 }}
-         className="max-w-5xl mx-auto"
+        key={currentQuestionIndex}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-5xl mx-auto"
       >
         <div className="bg-slate-800/50 backdrop-blur-sm p-8 rounded-xl shadow-lg mb-6">
           <h2 className="text-2xl mb-6 text-center">
