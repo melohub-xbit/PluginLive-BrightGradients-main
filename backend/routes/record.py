@@ -9,15 +9,54 @@ import dotenv
 import json
 from assessment.gemini import *
 import io
-from typing import List
-from pydantic import BaseModel
-from assessment.nonverbal import CommunicationAnalyzer
+from typing import List, Dict, Optional
+from pydantic import BaseModel, Field
 from uuid import uuid4
 from util.report_gen import *
 
 class FeedbackItem(BaseModel):
     question: str
     feedback: dict  # Or a more specific Pydantic model if the feedback structure is known
+
+class PromptLearn(BaseModel):
+    input: str
+
+# class TimestampedFeedback(BaseModel):
+#     feedback: str
+#     time: str
+
+# class SpeakingRate(BaseModel):
+#     comment: str
+#     rate: float
+
+# class PausePattern(BaseModel):
+#     comment: str
+#     count: int
+
+# class FillerWordUsage(BaseModel):
+#     comment: str
+#     count: int
+
+# class AdvancedParameters(BaseModel):
+#     articulation: str
+#     enunciation: str
+#     intelligibility: str
+#     tone: str
+#     filler_word_usage: FillerWordUsage
+#     pause_pattern: PausePattern
+#     sentence_structuring_and_grammar: str
+#     speaking_rate: SpeakingRate
+#     timestamped_feedback: List[TimestampedFeedback]
+
+# class QuestionAnalysis(BaseModel):
+#     advanced_parameters: AdvancedParameters
+#     transcript: str
+#     general_feedback: str
+
+# # Define a model for the entire quiz data structure
+# class QuizDataModel(BaseModel):
+#     # Use a dictionary where keys are quiz IDs and values are dictionaries of questions
+#     quizzes: Dict[str, Dict[str, List[str, QuestionAnalysis]]]
 
 dotenv.load_dotenv()
 
@@ -192,4 +231,36 @@ async def download_report(
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router_record.post("/learn-prompt")
+async def get_learn_prompts(
+    prompt: PromptLearn,
+    current_user: dict = Depends(get_current_user)
+):
+    # use the get_learning_from_input function to get the learning from the prompt
+    learning = get_learning_from_input(prompt.input)
+    print(learning)
+    return learning
+
+@router_record.get("/learn-history")
+async def get_learn_history(
+    current_user: dict = Depends(get_current_user)
+):
+    # Get user history from database
+    history = await Database.get_history(current_user['_id'])
     
+    # Format history data as a text prompt
+    formatted_history = "User's communication history:\n"
+    for quiz_id, questions in history.items():
+        formatted_history += f"\nQuiz {quiz_id}:\n"
+        for question, data in questions.items():
+            formatted_history += f"Question: {question}\n"
+            formatted_history += f"Video: {data[0]}\n"
+            formatted_history += f"Feedback: {data[1]}\n"
+    
+    # Get learning plan using Gemini
+    learning_plan = get_learning_from_feedbacks(formatted_history)
+    print(learning_plan)
+    
+    return learning_plan
+

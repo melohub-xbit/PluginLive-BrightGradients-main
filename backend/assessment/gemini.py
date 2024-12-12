@@ -26,6 +26,233 @@ def format_gemini_response(response_text):
     
     return response_dict  # Return dictionary for programmatic use
 
+
+#to get learning plan from specified goals
+def get_learning_from_input(prompt):
+  """To get learning plan from specified goals, as a string input from user
+    Returns a dict of goals in the speicified schema
+  """
+
+  system_prompt = f"""You are an expert communication coach and learning plan designer. Create a detailed, actionable learning plan in Markdown format based on the user's goals or feedback.
+
+                  Your plan should include:
+                  1. Clear, measurable goals broken down into milestones
+                  2. A structured weekly schedule (4-6 weeks)
+                  3. Specific exercises and practice activities
+                  4. Progress tracking metrics
+                  5. Recommended resources and tools
+                  6. Action items with deadlines
+                  7. Tips for maintaining motivation
+
+                  Format the plan with proper Markdown headings, bullet points, and sections. Make it practical and achievable while challenging enough to drive real improvement.
+
+                  If working with past feedback, analyze the patterns and areas needing most improvement to create a targeted plan.
+
+                  Current goals/feedback to address:
+                  {prompt}"""
+  
+  generation_config = {
+  "temperature": 1,
+  "top_p": 0.95,
+  "top_k": 40,
+  "max_output_tokens": 8192,
+  "response_schema": content.Schema(
+    type = content.Type.OBJECT,
+    enum = [],
+    required = ["Goals", "Weekly Focus Areas", "Actionable Items", "Resources", "Progress Tracking Metrics", "Exercises and practice activities", "Tips to stay consistent"],
+    properties = {
+      "Goals": content.Schema(
+        type = content.Type.ARRAY,
+        items = content.Schema(
+          type = content.Type.STRING,
+        ),
+      ),
+      "Weekly Focus Areas": content.Schema(
+        type = content.Type.ARRAY,
+        items = content.Schema(
+          type = content.Type.OBJECT,
+          enum = [],
+          required = ["Week number", "Targets"],
+          properties = {
+            "Week number": content.Schema(
+              type = content.Type.ARRAY,
+              items = content.Schema(
+                type = content.Type.STRING,
+              ),
+            ),
+            "Targets": content.Schema(
+              type = content.Type.ARRAY,
+              items = content.Schema(
+                type = content.Type.STRING,
+              ),
+            ),
+          },
+        ),
+      ),
+      "Actionable Items": content.Schema(
+        type = content.Type.ARRAY,
+        items = content.Schema(
+          type = content.Type.STRING,
+        ),
+      ),
+      "Resources": content.Schema(
+        type = content.Type.ARRAY,
+        items = content.Schema(
+          type = content.Type.STRING,
+        ),
+      ),
+      "Progress Tracking Metrics": content.Schema(
+        type = content.Type.ARRAY,
+        items = content.Schema(
+          type = content.Type.STRING,
+        ),
+      ),
+      "Exercises and practice activities": content.Schema(
+        type = content.Type.ARRAY,
+        items = content.Schema(
+          type = content.Type.STRING,
+        ),
+      ),
+      "Tips to stay consistent": content.Schema(
+        type = content.Type.ARRAY,
+        items = content.Schema(
+          type = content.Type.STRING,
+        ),
+      ),
+    },
+  ),
+  "response_mime_type": "application/json",
+}
+  
+  model = genai.GenerativeModel(
+  model_name="gemini-1.5-flash",
+  generation_config=generation_config,
+  system_instruction="You are an expert communication coach and learning plan designer. Create a detailed, actionable learning plan in Markdown format based on the user's goals or feedback.\n\nYour plan should include:\n1. Clear, measurable goals broken down into milestones\n2. A structured weekly schedule (4-6 weeks)\n3. Specific exercises and practice activities\n4. Progress tracking metrics\n5. Recommended resources and tools\n6. Action items with deadlines\n7. Tips for maintaining motivation\n\nFormat the plan with proper Markdown headings, bullet points, and sections. Make it practical and achievable while challenging enough to drive real improvement.\n\nIf working with past feedback, analyze the patterns and areas needing most improvement to create a targeted plan.\n\nCurrent goals/feedback to address user prompt\n\n",
+)
+
+  chat_session = model.start_chat(
+    history=[
+    ]
+  )
+
+  response = chat_session.send_message(prompt)
+
+  return (format_gemini_response(response.text))
+
+
+#get learning from past feedbacks
+#to get learning plan from specified goals
+def get_learning_from_feedbacks(prompt):
+  """To get learning plan from specified goals, as a string input from user
+    Returns a dict of goals in the speicified schema
+  """
+
+  system_prompt = f"""You will get the history of the user as an input, in which there will be feedbacks for some questions. Use all those feedbacks. You are an expert communication coach and learning plan designer. Create a detailed, actionable learning plan in Markdown format based on the user's goals or feedback.
+
+                  Your plan should include:
+                  1. Clear, measurable goals broken down into milestones
+                  2. A structured weekly schedule (4-6 weeks)
+                  3. Specific exercises and practice activities
+                  4. Progress tracking metrics
+                  5. Recommended resources and tools
+                  6. Action items with deadlines
+                  7. Tips for maintaining motivation
+
+                  Format the plan with proper Markdown headings, bullet points, and sections. Make it practical and achievable while challenging enough to drive real improvement.
+
+                  If working with past feedback, analyze the patterns and areas needing most improvement to create a targeted plan.
+
+                  Current goals/feedback to address:
+                  {prompt}"""
+  
+  generation_config = {
+  "temperature": 1,
+  "top_p": 0.95,
+  "top_k": 40,
+  "max_output_tokens": 8192,
+  "response_schema": content.Schema(
+    type = content.Type.OBJECT,
+    enum = [],
+    required = ["Goals", "Weekly Focus Areas", "Actionable Items", "Resources", "Progress Tracking Metrics", "Exercises and practice activities", "Tips to stay consistent"],
+    properties = {
+      "Goals": content.Schema(
+        type = content.Type.ARRAY,
+        items = content.Schema(
+          type = content.Type.STRING,
+        ),
+      ),
+      "Weekly Focus Areas": content.Schema(
+        type = content.Type.ARRAY,
+        items = content.Schema(
+          type = content.Type.OBJECT,
+          enum = [],
+          required = ["Week number", "Targets"],
+          properties = {
+            "Week number": content.Schema(
+              type = content.Type.ARRAY,
+              items = content.Schema(
+                type = content.Type.STRING,
+              ),
+            ),
+            "Targets": content.Schema(
+              type = content.Type.ARRAY,
+              items = content.Schema(
+                type = content.Type.STRING,
+              ),
+            ),
+          },
+        ),
+      ),
+      "Actionable Items": content.Schema(
+        type = content.Type.ARRAY,
+        items = content.Schema(
+          type = content.Type.STRING,
+        ),
+      ),
+      "Resources": content.Schema(
+        type = content.Type.ARRAY,
+        items = content.Schema(
+          type = content.Type.STRING,
+        ),
+      ),
+      "Progress Tracking Metrics": content.Schema(
+        type = content.Type.ARRAY,
+        items = content.Schema(
+          type = content.Type.STRING,
+        ),
+      ),
+      "Exercises and practice activities": content.Schema(
+        type = content.Type.ARRAY,
+        items = content.Schema(
+          type = content.Type.STRING,
+        ),
+      ),
+      "Tips to stay consistent": content.Schema(
+        type = content.Type.ARRAY,
+        items = content.Schema(
+          type = content.Type.STRING,
+        ),
+      ),
+    },
+  ),
+  "response_mime_type": "application/json",
+}
+  
+  model = genai.GenerativeModel(
+  model_name="gemini-1.5-flash",
+  generation_config=generation_config,
+  system_instruction="You are an expert communication coach and learning plan designer. Create a detailed, actionable learning plan in Markdown format based on the user's goals or feedback.\n\nYour plan should include:\n1. Clear, measurable goals broken down into milestones\n2. A structured weekly schedule (4-6 weeks)\n3. Specific exercises and practice activities\n4. Progress tracking metrics\n5. Recommended resources and tools\n6. Action items with deadlines\n7. Tips for maintaining motivation\n\nFormat the plan with proper Markdown headings, bullet points, and sections. Make it practical and achievable while challenging enough to drive real improvement.\n\nIf working with past feedback, analyze the patterns and areas needing most improvement to create a targeted plan.\n\nCurrent goals/feedback to address user prompt\n\n",
+)
+
+  # data = json.loads(prompt)
+  chat_session = model.start_chat()
+  response = chat_session.send_message(prompt)
+
+  return format_gemini_response(response.text)
+
+
+
+
 def get_candidate_assessment(file_url, question):
     """
     Get structured feedback from Gemini for an audio response
