@@ -27,8 +27,10 @@ const CreatePlan: React.FC = () => {
   // const [pastFeedbacks, setPastFeedbacks] = useState<Feedbacks[]>([]);
   const [prompt, setPrompt] = useState("");
   const [generatedPlan, setGeneratedPlan] = useState<LearningPlan | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   
   const handleGenerateFromHistory = async () => {
+    setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
       
@@ -49,10 +51,13 @@ const CreatePlan: React.FC = () => {
       console.log("Generated Plan:", generatedPlan);
     } catch (error) {
       console.error('Error generating plan:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handlePromptSubmit = async () => {
+    setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
       console.log(JSON.stringify(prompt));
@@ -74,6 +79,8 @@ const CreatePlan: React.FC = () => {
       console.log("Generated Plan:", generatedPlan);
     } catch (error) {
       console.error('Error generating plan:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
   
@@ -117,12 +124,13 @@ const CreatePlan: React.FC = () => {
               onChange={(e) => setPrompt(e.target.value)}
             />
             <div className="flex justify-end mt-4">
-              <button
-                className="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-2 rounded-lg hover:opacity-90 transition-opacity"
-                onClick={handlePromptSubmit}
-              >
-                Generate Plan
-              </button>
+            <button
+              className="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-2 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+              onClick={handlePromptSubmit}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Generating...' : 'Generate Plan'}
+            </button>
             </div>
           </div>
 
@@ -131,10 +139,11 @@ const CreatePlan: React.FC = () => {
           </div>
 
           <button
-            className="w-full bg-gradient-to-r from-green-500 to-teal-500 p-4 rounded-xl hover:opacity-90 transition-opacity font-semibold"
+            className="w-full bg-gradient-to-r from-green-500 to-teal-500 p-4 rounded-xl hover:opacity-90 transition-opacity font-semibold disabled:opacity-50"
             onClick={handleGenerateFromHistory}
+            disabled={isLoading}
           >
-            Generate Plan Based on Past Quizzes
+            {isLoading ? 'Generating...' : 'Generate Plan Based on Past Quizzes'}
           </button>
         </div>
 
@@ -174,7 +183,7 @@ const CreatePlan: React.FC = () => {
                 <div className="space-y-4">
                   {generatedPlan["Weekly Focus Areas"].map((week, index) => (
                     <div key={index} className="bg-slate-700 p-4 rounded-lg">
-                      <h4 className="text-purple-400 font-medium mb-2">Week {week["Week number"]}</h4>
+                      <h4 className="text-purple-400 font-medium mb-2">{week["Week number"]}</h4>
                       <ul className="space-y-1 ml-4">
                         {week.Targets.map((target, idx) => (
                           <li key={idx} className="text-gray-200">• {target}</li>
