@@ -1,4 +1,4 @@
-# CommSense: Advanced Communication Analysis Platform
+# Eloquence: Advanced Communication Analysis Platform
 
 ## Technology Stack
 
@@ -19,7 +19,7 @@
 
 ## 🌟 Project Overview
 
-CommSense is an innovative communication analysis tool that revolutionizes how individuals and professionals understand and improve their communication skills through immersive, AI-powered insights.
+Eloquence is an innovative communication analysis tool that revolutionizes how individuals and professionals understand and improve their communication skills through immersive, AI-powered insights.
 
 ### Team BrightGradients
 

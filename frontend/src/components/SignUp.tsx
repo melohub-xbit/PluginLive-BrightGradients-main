@@ -69,7 +69,7 @@ const SignUp = () => {
           className="hidden md:block p-8"
         >
           <h1 className="text-4xl font-bold mb-8 bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
-            Join CommSense Today
+            Join Eloquence Today
           </h1>
           <div className="grid grid-cols-2 gap-4">
             {features.map((feature, index) => (

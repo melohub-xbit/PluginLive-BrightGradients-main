@@ -56,7 +56,7 @@ const SignIn = () => {
           className="hidden md:block p-8"
         >
           <h1 className="text-4xl font-bold mb-8 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-            Welcome Back to CommSense
+            Welcome Back to Eloquence
           </h1>
           <div className="grid grid-cols-2 gap-4">
             {features.map((feature, index) => (

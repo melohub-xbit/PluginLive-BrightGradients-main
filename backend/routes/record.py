@@ -189,6 +189,16 @@ async def get_history(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@router_record.get("/final-feedbacks")
+async def get_final_feedbacks(
+    current_user: dict = Depends(get_current_user)
+):
+    try:
+        result = await Database.get_final_feedbacks(current_user['_id'])
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 class DownloadReportRequest(BaseModel):
     feedbackData: dict
     feedbacks: List[dict]

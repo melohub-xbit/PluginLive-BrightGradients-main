@@ -122,6 +122,12 @@ class Database:
             {"_id": user_object_id},
             {"$set": {f"final_feedbacks.{quiz_id}": final_feedbacks}}
         )
+    
+    @classmethod
+    async def get_final_feedbacks(cls, user_id: str):
+        user_object_id = ObjectId(user_id)
+        user_data = await cls.user_collection.find_one({"_id": user_object_id})
+        return user_data.get("final_feedbacks", {})
 
     @classmethod
     async def get_history(cls, user_id: str):
