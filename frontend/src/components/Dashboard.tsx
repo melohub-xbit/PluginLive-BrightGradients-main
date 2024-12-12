@@ -3,6 +3,7 @@ import { useQuiz } from "../context/QuizContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { User } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 const Dashboard = ({ userData }: { userData: User }) => {
   const navigate = useNavigate();
@@ -18,6 +19,8 @@ const Dashboard = ({ userData }: { userData: User }) => {
     // setCurrentQuizId("");
 
     try {
+      toast("Generating questions...");
+
       // get all the questions here
       const token = localStorage.getItem("token");
       const response = await fetch(
@@ -35,7 +38,9 @@ const Dashboard = ({ userData }: { userData: User }) => {
       setQuizId(data.quiz_id);
       setQuestions([...data.questions.questions]);
       navigate("/quiz");
+      toast.success("Questions generated successfully!");
     } catch (error) {
+      toast.error("Failed to generate questions! Please try again.");
       console.error("Failed to fetch questions:", error);
     } finally {
       setLoadingQues(false);

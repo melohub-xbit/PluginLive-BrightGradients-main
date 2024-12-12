@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import toast from "react-hot-toast";
 
 export interface User {
   username: string;
@@ -58,6 +59,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const login = async (credentials: { username: string; password: string }) => {
     try {
+      toast("Logging in...", {
+        icon: "🔒",
+      });
+
       const response = await fetch(
         `${import.meta.env.VITE_APP_BACKEND_URL}/login`,
         {
@@ -77,18 +82,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             Authorization: `Bearer ${data.access_token}`,
           },
         });
+
         if (res.ok) {
           const data = await res.json();
           setUser(data);
+          toast.success("Logged in successfully!");
+        } else {
+          toast.error("Login failed. Please check your credentials.");
         }
+      } else {
+        throw new Error("Login failed. Please check your credentials.");
       }
     } catch (error) {
-      console.error("Login failed:", error);
+      console.log(error);
+      toast.error("Login failed. Please check your credentials.");
     }
   };
 
   const logout = async () => {
     try {
+      toast("Logging out...", {
+        icon: "🔒",
+      });
       const token = localStorage.getItem("token");
       const response = await fetch(
         `${import.meta.env.VITE_APP_BACKEND_URL}/logout`,
@@ -103,8 +118,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         localStorage.removeItem("token");
         setUser(null);
       }
+      toast.success("Logged out successfully!");
     } catch (error) {
       console.error("Logout failed:", error);
+      toast.error("Logout failed. Please try again.");
     }
   };
 

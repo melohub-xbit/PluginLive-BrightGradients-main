@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const SignUp = () => {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -23,6 +25,7 @@ const SignUp = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      toast("Signing up...");
       const response = await fetch(
         `${import.meta.env.VITE_APP_BACKEND_URL}/register`,
         {
@@ -36,9 +39,11 @@ const SignUp = () => {
       );
       if (response.ok) {
         navigate("/signin");
+        toast.success("Sign up successful!");
       }
     } catch (error) {
       console.error("Registration failed:", error);
+      toast.error("Registration failed. Please try again.");
     }
   };
 
