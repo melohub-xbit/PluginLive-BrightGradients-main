@@ -4,7 +4,6 @@ import { format } from "date-fns";
 import { useAuth } from "../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 
-
 interface ActionableRecommendation {
   reason: string;
   recommendation: string;
@@ -107,96 +106,78 @@ const Results = () => {
 
   const renderFullFeedback = (feedback: FinalFeedback) => (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-      onClick={() => setShowFullFeedback(false)}
+      initial={{ scale: 0.95 }}
+      animate={{ scale: 1 }}
+      exit={{ scale: 0.95 }}
+      className="bg-slate-800 p-8 rounded-xl max-w-2xl max-h-[80vh] overflow-y-auto m-4 relative"
+      onClick={(e) => e.stopPropagation()}
     >
-      <motion.div
-        initial={{ scale: 0.95 }}
-        animate={{ scale: 1 }}
-        exit={{ scale: 0.95 }}
-        className="bg-slate-800 p-8 rounded-xl max-w-2xl max-h-[80vh] overflow-y-auto m-4 relative"
-        onClick={(e) => e.stopPropagation()}
+      <button
+        className="absolute top-2 right-2 text-white hover:text-gray-400"
+        onClick={() => setShowFullFeedback(false)}
       >
-        <button
-          className="absolute top-2 right-2 text-white hover:text-gray-400"
-          onClick={() => setShowFullFeedback(false)}
-        >
-          &times;
-        </button>
-  
-        <h3 className="text-xl font-bold mb-4 text-cyan-400">Detailed Feedback</h3>
-  
-        <div className="space-y-4">
-          <div>
-            <h4 className="font-semibold text-cyan-400">Overall Feedback</h4>
-            <p className="text-white mt-2">
-              {feedback.overall_feedback.summary}
-            </p>
-          </div>
-  
-          <div>
-            <h4 className="font-semibold text-cyan-400">Key Strengths</h4>
-            <p className="text-white mt-2">
-              {feedback.overall_feedback.key_strengths}
-            </p>
-          </div>
-  
-          <div>
-            <h4 className="font-semibold text-cyan-400">Areas of Improvement</h4>
-            <p className="text-white mt-2">
-              {feedback.overall_feedback.areas_of_improvement}
-            </p>
-          </div>
-  
-          <div>
-            <h4 className="font-semibold text-cyan-400">Speaking Metrics</h4>
-            <div className="grid grid-cols-2 gap-4 mt-2">
-              <div className="bg-slate-700 p-3 rounded">
-                <p className="text-cyan-300">Speaking Rate</p>
-                <p className="text-sm text-white">
-                  {feedback.advanced.speaking_rate.comment}
-                </p>
-              </div>
-              <div className="bg-slate-700 p-3 rounded">
-                <p className="text-cyan-300">Filler Words</p>
-                <p className="text-sm text-white">
-                  {feedback.advanced.filler_word_usage.comment}
-                </p>
-              </div>
+        &times;
+      </button>
+
+      <h3 className="text-xl font-bold mb-4 text-cyan-400">
+        Detailed Feedback
+      </h3>
+
+      <div className="space-y-4">
+        <div>
+          <h4 className="font-semibold text-cyan-400">Overall Feedback</h4>
+          <p className="text-white mt-2">{feedback.overall_feedback.summary}</p>
+        </div>
+
+        <div>
+          <h4 className="font-semibold text-cyan-400">Key Strengths</h4>
+          <p className="text-white mt-2">
+            {feedback.overall_feedback.key_strengths}
+          </p>
+        </div>
+
+        <div>
+          <h4 className="font-semibold text-cyan-400">Areas of Improvement</h4>
+          <p className="text-white mt-2">
+            {feedback.overall_feedback.areas_of_improvement}
+          </p>
+        </div>
+
+        <div>
+          <h4 className="font-semibold text-cyan-400">Speaking Metrics</h4>
+          <div className="grid grid-cols-2 gap-4 mt-2">
+            <div className="bg-slate-700 p-3 rounded">
+              <p className="text-cyan-300">Speaking Rate</p>
+              <p className="text-sm text-white">
+                {feedback.advanced.speaking_rate.comment}
+              </p>
             </div>
-          </div>
-  
-          <div>
-            <h4 className="font-semibold text-cyan-400">Recommendations</h4>
-            <div className="space-y-2 mt-2">
-              {feedback.advanced.actionable_recommendations.map(
-                (rec, index) => (
-                  <div key={index} className="bg-slate-700 p-3 rounded">
-                    <p className="text-white">{rec.recommendation}</p>
-                    <p className="text-sm text-gray-400 mt-1">{rec.reason}</p>
-                  </div>
-                )
-              )}
+            <div className="bg-slate-700 p-3 rounded">
+              <p className="text-cyan-300">Filler Words</p>
+              <p className="text-sm text-white">
+                {feedback.advanced.filler_word_usage.comment}
+              </p>
             </div>
           </div>
         </div>
-  
-        <button
-          className="mt-6 bg-cyan-500 px-4 py-2 rounded-lg hover:bg-cyan-600 transition-colors"
-          onClick={() => setShowFullFeedback(false)}
-        >
-          Close
-        </button>
-      </motion.div>
+
+        <div>
+          <h4 className="font-semibold text-cyan-400">Recommendations</h4>
+          <div className="space-y-2 mt-2">
+            {feedback.advanced.actionable_recommendations.map((rec, index) => (
+              <div key={index} className="bg-slate-700 p-3 rounded">
+                <p className="text-white">{rec.recommendation}</p>
+                <p className="text-sm text-gray-400 mt-1">{rec.reason}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </motion.div>
   );
-  
 
   return (
-    <div className="h-screen bg-slate-900 text-white p-8 w-screen">
+    <div className="min-h-screen bg-slate-900 text-white p-8 w-screen">
       <h1 className="text-3xl font-bold mb-6 text-center">
         Communication Assessment Report
       </h1>
@@ -212,22 +193,7 @@ const Results = () => {
         <p className="mb-4">Candidate: {user?.full_name}</p>
         <p className="mb-8">Date: {currentDate}</p>
 
-        {finalFeedback && (
-          <div className="bg-slate-700 p-4 rounded-lg mb-4">
-            <p className="text-lg font-medium text-white">
-              {finalFeedback.overall_feedback.summary}
-            </p>
-            <button
-              onClick={() => setShowFullFeedback(true)}
-              className="mt-2 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold py-1 px-2 rounded-md text-sm"
-            >
-              View Full Feedback
-            </button>
-          </div>
-        )}
-        <AnimatePresence>
-          {showFullFeedback && finalFeedback && renderFullFeedback(finalFeedback)}
-        </AnimatePresence>
+        {finalFeedback && renderFullFeedback(finalFeedback)}
       </div>
     </div>
   );
