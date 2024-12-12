@@ -149,7 +149,7 @@ stack-data
 starlette
 tensorboard
 tensorboard-data-server
-tensorflow
+tensorflow-cpu
 tensorflow_intel
 termcolor
 tf_keras
