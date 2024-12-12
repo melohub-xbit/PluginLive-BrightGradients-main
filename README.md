@@ -13,8 +13,8 @@
 ![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)
 
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
-![Stars](https://img.shields.io/github/stars/your-username/PluginLive-BrightGradients)
-![Issues](https://img.shields.io/github/issues/your-username/PluginLive-BrightGradients)
+![Stars](https://img.shields.io/github/stars/melohub-xbit/PluginLive-BrightGradients-main)
+![Issues](https://img.shields.io/github/issues/melohub-xbit/PluginLive-BrightGradients-main)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 
 A sophisticated platform that leverages AI to provide comprehensive communication skills assessment and detailed feedback through interactive video sessions.
@@ -108,9 +108,6 @@ A sophisticated platform that leverages AI to provide comprehensive communicatio
   - [ ] Eye contact tracking
 
 - [x] Multiple Language Support
-  - [x] Hindi support
-  - [x] Tamil support
-  - [x] Marathi support
   - [x] Regional accent recognition
 
 - [x] Personalized Learning Plan
