@@ -114,6 +114,14 @@ class Database:
                 }
             }
         )
+    
+    @classmethod
+    async def save_final_feedbacks(cls, final_feedbacks: dict, user_id: str, quiz_id: str):
+        user_object_id = ObjectId(user_id)
+        await cls.user_collection.update_one(
+            {"_id": user_object_id},
+            {"$set": {f"final_feedbacks.{quiz_id}": final_feedbacks}}
+        )
 
     @classmethod
     async def get_history(cls, user_id: str):
