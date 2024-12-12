@@ -50,6 +50,7 @@ interface QuizContextType {
   setFeedback: (questionIndex: number, feedback: Feedback) => void;
   setFeedbacks: (feedbacks: Record<number, Feedback>) => void;
   setCurrentQuizId: (quizId: string) => void;
+  setQuizId: (quizId: string) => void;
 }
 
 const QuizContext = createContext<QuizContextType | undefined>(undefined);
@@ -69,11 +70,16 @@ export const QuizProvider = ({ children }: { children: ReactNode }) => {
     setFeedbacks((prev) => ({ ...prev, [questionIndex]: feedback }));
   };
 
+  const setQuizId = (quizId: string) => {
+    setCurrentQuizId(quizId);
+  };
+
   return (
     <QuizContext.Provider
       value={{
         currentQuizId,
         setCurrentQuizId,
+        setQuizId,
         questions,
         currentQuestionIndex,
         feedbacks,
