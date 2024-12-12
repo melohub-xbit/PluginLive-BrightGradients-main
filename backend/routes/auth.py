@@ -110,3 +110,7 @@ async def logout(current_user: dict = Depends(get_current_user)):
 @router.get("/me")
 async def read_users_me(current_user: dict = Depends(get_current_user)):
     return current_user
+
+@router.get("/health")
+async def get_health():
+    return {"status": "OK"}
