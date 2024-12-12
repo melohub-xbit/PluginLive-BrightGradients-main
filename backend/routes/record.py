@@ -36,56 +36,28 @@ router_record = APIRouter()
 async def generate_questions(
     current_user: dict = Depends(get_current_user)
 ):
-    system_prompt = """Role: You are a communication coach designing engaging and insightful questions to assess and enhance people's speaking abilities while reflecting on their personal growth and interpersonal skills.
+    system_prompt = """Role: You are a communication coach designing engaging and insightful questions to assess and enhance people's speaking abilities.
 
-Objective: Develop 7-10 thought-provoking questions that explore a variety of scenarios—professional, personal, and social—to assess communication skills while encouraging self-reflection, creativity, and depth.
+Objective: Develop 5 thought-provoking questions for a casual yet professional conversation that assess communication skills while encouraging self-reflection and depth.  Focus on questions that reveal the candidate's ability to articulate clearly, think critically, and engage naturally.  Avoid hypothetical scenarios or overly complex situations.
 
-Guidelines for the Questions
-Scenario Diversity: Include both workplace challenges and real-life situations, blending storytelling with problem-solving.
-Key Competencies:
-Storytelling & Expression: Questions should encourage vivid, structured, and relatable storytelling.
-Leadership Skills: Situations that reveal the candidate's ability to lead, inspire, and navigate conflict.
-Overcoming Barriers: Explore how candidates handle communication breakdowns or barriers.
-Moral Reflection: Test ethical reasoning and the ability to articulate personal values.
-Social Etiquette: Assess how they handle interpersonal relationships with tact and professionalism.
-Resilience and Personal Growth: Situations that require reflection on overcoming personal or professional difficulties.
-Engagement: Questions should evoke creative, detailed, and natural responses.
-Tone: Maintain a balance between light, approachable topics and deeper, thought-provoking ones.
-Question Examples
-Workplace Scenario:
-"Describe a time when you had to give feedback to a colleague or team member that was difficult to deliver. How did you approach it, and what was the outcome?"
+Guidelines for the Questions:
+* Focus on real experiences and personal reflections.
+* Encourage storytelling and detailed responses.
+* Assess clarity of thought, articulation, and engagement.
+* Maintain a balance between light and thought-provoking.
 
-Storytelling & Expression:
-"Share a personal experience where you made a significant decision that changed your life. What factors influenced your choice, and how did it shape who you are today?"
+Questions:
+1. Tell me about a recent accomplishment you're proud of.
+2. What's a topic you're passionate about and why?
+3. Describe a time you had to explain something complex to someone unfamiliar with the subject.
+4. What's a skill you're currently working on improving, and how are you approaching it?
+5.  Tell me about a time you received constructive feedback. How did you respond?
 
-Leadership in Action:
-"Imagine you're leading a project with a team facing a tight deadline and low morale. What specific steps would you take to motivate the team and ensure the project is completed successfully?"
-
-Overcoming Communication Barriers:
-"Describe a situation where you faced a communication barrier with someone from a different background or perspective. How did you bridge the gap and find common ground?"
-
-Morals & Values:
-"Talk about a time when you faced an ethical dilemma at work or in your personal life. How did you navigate it, and what values guided your decision-making?"
-
-Social Etiquette & Tact:
-"You're attending a networking event where you don't know anyone. How would you initiate conversations and leave a positive impression on the people you meet?"
-
-Resilience:
-"Reflect on a personal or professional setback you experienced. How did you handle the situation, and what lessons did you take away from it?"
-
-Conflict Resolution:
-"Describe a time when you had to mediate a conflict between two people or groups. What approach did you take, and what was the outcome?"
-
-Personality & Humor:
-"If you could host a dinner with three people, living or historical, who would they be and why? What would you talk about?"
-
-Vision & Creativity:
-"Imagine you are asked to give a motivational speech to a group of young professionals just starting their careers. What would your key message be, and why?"
 
 Outcome of Responses
 Gain insights into the candidate's ability to organize thoughts, articulate clearly, and connect with an audience.
-Evaluate their emotional intelligence, leadership style, and adaptability.
-Identify how well they express personal and professional values, resilience, and vision."""
+Evaluate their communication style, critical thinking, and ability to reflect on personal experiences.
+"""
 
     generation_config = {
         "temperature": 1,
