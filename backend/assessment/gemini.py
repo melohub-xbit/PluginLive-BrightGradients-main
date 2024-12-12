@@ -393,3 +393,97 @@ def get_final_summary(feedbacks):
   response = chat_session.send_message("Generate feedback.")
 
   return format_gemini_response(response.text)
+
+def get_graph_data(feedbacks):
+  '''
+    This function takes a list of feedbacks as input and returns a summary of the feedbacks.
+    Args:
+        feedbacks (list): A list of feedbacks along with the questions.
+    Returns:
+        json: Data through which the graph is plotted.
+  '''
+
+  # Create the model
+  generation_config = {
+    "temperature": 1,
+    "top_p": 0.95,
+    "top_k": 40,
+    "max_output_tokens": 8192,
+    "response_schema": content.Schema(
+      type = content.Type.OBJECT,
+      enum = [],
+      required = ["tone", "speaking_rate", "clarity", "articulation", "enunciation", "sentence_structuring", "pause_count", "filler_word_count"],
+      properties = {
+        "tone": content.Schema(
+          type = content.Type.ARRAY,
+          items = content.Schema(
+            type = content.Type.NUMBER,
+          ),
+        ),
+        "speaking_rate": content.Schema(
+          type = content.Type.ARRAY,
+          items = content.Schema(
+            type = content.Type.NUMBER,
+          ),
+        ),
+        "clarity": content.Schema(
+          type = content.Type.ARRAY,
+          items = content.Schema(
+            type = content.Type.NUMBER,
+          ),
+        ),
+        "articulation": content.Schema(
+          type = content.Type.ARRAY,
+          items = content.Schema(
+            type = content.Type.NUMBER,
+          ),
+        ),
+        "enunciation": content.Schema(
+          type = content.Type.ARRAY,
+          items = content.Schema(
+            type = content.Type.NUMBER,
+          ),
+        ),
+        "sentence_structuring": content.Schema(
+          type = content.Type.ARRAY,
+          items = content.Schema(
+            type = content.Type.NUMBER,
+          ),
+        ),
+        "pause_count": content.Schema(
+          type = content.Type.ARRAY,
+          items = content.Schema(
+            type = content.Type.INTEGER,
+          ),
+        ),
+        "filler_word_count": content.Schema(
+          type = content.Type.ARRAY,
+          items = content.Schema(
+            type = content.Type.INTEGER,
+          ),
+        ),
+      },
+    ),
+    "response_mime_type": "application/json",
+  }
+
+  model = genai.GenerativeModel(
+    model_name="gemini-1.5-flash",
+    generation_config=generation_config,
+    system_instruction="You are an advanced AI system tasked with extracting **graphable data** from the given final feedback and feedbacks for each question. The extracted data should be structured to allow easy visualization using Python libraries like `matplotlib` or `seaborn`.  \n\n### **Input Details**:\n1. **Final Feedback**:\n   - Metrics such as tone, speaking rate, filler word usage, clarity, pause patterns, etc.\n2. **Feedback for Each Question**:\n   - Metrics for articulation, enunciation, intelligibility, tone, filler word usage, speaking rate, pause patterns, and sentence structuring.\n   - Counts or scores (e.g., filler word counts, pauses) and qualitative insights (e.g., tone confidence level).\n\n### **Output Requirements**:\nProvide graph data as a JSON object with the following structure:  \n\n1. **Trends Across Questions**:\n   - An array for each parameter showing its value across the 5 questions.  \n   - Example parameters:\n     - **Tone**: Confidence levels (e.g., 1-5 scale).\n     - **Speaking Rate**: A numerical score or count.\n     - **Filler Word Usage**: Count per question.\n     - **Clarity/Intelligibility**: Score or qualitative rating converted to a numerical value.\n     - **Pause Pattern**: Number of pauses per question.\n\n2. **Aggregate Metrics**:\n   - Final averages or cumulative values for each parameter.  \n\n3. **Data Structure Example**:\n```json\n{\n     \"tone\": [3.2, 3.5, 3.0, 4.0, 3.8],  // Tone confidence levels (1-5 scale per question)\n    \"speaking_rate\": [2.5, 3.0, 2.8, 3.2, 3.1],  // Speaking rate scores per question\n    \"filler_word_count\": [4, 3, 5, 2, 6],  // Count of filler words per question\n    \"clarity\": [4.0, 3.8, 4.2, 3.9, 4.1],  // Clarity/intelligibility scores (1-5 scale)\n    \"pause_count\": [2, 3, 1, 4, 2],  // Number of pauses per question\n    \"articulation\": [4.5, 4.2, 4.0, 3.8, 4.1],  // Articulation scores (1-5 scale)\n    \"enunciation\": [4.0, 3.9, 3.8, 4.1, 4.0],  // Enunciation scores (1-5 scale)\n    \"sentence_structuring\": [3.5, 3.8, 4.0, 3.7, 4.2]  // Sentence structuring quality (1-5 scale)\n  \"aggregate_metrics\": {\n    \"average_tone\": 3.5,\n    \"total_filler_words\": 20,\n    \"average_clarity\": 4.0,\n    \"total_pauses\": 12\n  }\n}\n```\n\n4. **Data Normalization**:\n   - Where applicable, normalize qualitative insights into a consistent numerical scale (e.g., 1-5 for tone or clarity).  \n\n### **Tone and Language**:\n- Deliver the output in a clear and structured JSON format.\n- Ensure all values are easy to interpret and suitable for direct use in graph plotting.",
+  )
+
+  chat_session = model.start_chat(
+    history=[
+      {
+        "role": "user",
+        "parts": [
+          f"""{feedbacks}""",
+        ],
+      },
+    ]
+  )
+
+  response = chat_session.send_message("Generate the graph.")
+
+  return format_gemini_response(response.text)
