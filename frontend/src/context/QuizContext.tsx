@@ -43,16 +43,19 @@ interface QuizContextType {
   currentQuestionIndex: number;
   feedbacks: Record<number, Feedback>;
   answeredQuestions: number;
+  currentQuizId: string;
   incrementAnsweredQuestions: () => void;
   setQuestions: (questions: string[]) => void;
   setCurrentQuestionIndex: (index: number) => void;
   setFeedback: (questionIndex: number, feedback: Feedback) => void;
   setFeedbacks: (feedbacks: Record<number, Feedback>) => void;
+  setCurrentQuizId: (quizId: string) => void;
 }
 
 const QuizContext = createContext<QuizContextType | undefined>(undefined);
 
 export const QuizProvider = ({ children }: { children: ReactNode }) => {
+  const [currentQuizId, setCurrentQuizId] = useState<string>("");
   const [questions, setQuestions] = useState<string[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [feedbacks, setFeedbacks] = useState<Record<number, Feedback>>({});
@@ -69,6 +72,8 @@ export const QuizProvider = ({ children }: { children: ReactNode }) => {
   return (
     <QuizContext.Provider
       value={{
+        currentQuizId,
+        setCurrentQuizId,
         questions,
         currentQuestionIndex,
         feedbacks,

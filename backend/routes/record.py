@@ -113,8 +113,9 @@ Identify how well they express personal and professional values, resilience, and
     response = model.generate_content("Generate 5 professional communication assessment questions")
 
     questions = json.loads(response.text)
+    quiz_id = str(uuid4())
 
-    return questions
+    return {"questions": questions, "quiz_id": quiz_id}
 
 
 @router_record.post("/final-feedback")

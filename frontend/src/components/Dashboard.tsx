@@ -6,7 +6,7 @@ import { User } from "../context/AuthContext";
 
 const Dashboard = ({ userData }: { userData: User }) => {
   const navigate = useNavigate();
-  const { setQuestions, setFeedbacks } = useQuiz();
+  const { setQuestions, setFeedbacks, setCurrentQuizId } = useQuiz();
   const [loadingQues, setLoadingQues] = useState(false);
 
   const handleStartAssessment = async () => {
@@ -15,13 +15,16 @@ const Dashboard = ({ userData }: { userData: User }) => {
     // first clear all the questions and feedbacks
     setQuestions([]);
     setFeedbacks({});
+    setCurrentQuizId("");
 
     try {
       // get all the questions here
       const response = await fetch("http://localhost:8000/generate-questions");
       const data = await response.json();
 
-      setQuestions([...data.questions]);
+      console.log(data);
+      // setCurrentQuizId(data.questions.quizId);
+      // setQuestions([...data.questions.questions]);
       navigate("/quiz");
     } catch (error) {
       console.error("Failed to fetch questions:", error);
