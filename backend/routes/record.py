@@ -31,7 +31,9 @@ model = genai.GenerativeModel('gemini-1.5-flash')
 router_record = APIRouter()
 
 @router_record.get("/generate-questions")
-async def generate_questions():
+async def generate_questions(
+    current_user: dict = Depends(get_current_user)
+):
     system_prompt = """Role: You are a communication coach designing engaging and insightful questions to assess and enhance people's speaking abilities while reflecting on their personal growth and interpersonal skills.
 
 Objective: Develop 7-10 thought-provoking questions that explore a variety of scenarios—professional, personal, and social—to assess communication skills while encouraging self-reflection, creativity, and depth.
@@ -164,8 +166,19 @@ async def save_video(
 
     vidUrl = result["url"]
 
-    await Database.save_history(get_current_user["_id"], vidUrl, candidate_assess, question, quiz_id)
+    await Database.save_history(current_user['_id'], vidUrl, candidate_assess, question, quiz_id)
 
     #give dict of question:video and question:feedback to Database functions
     
-    return {"url": result["url"], "feedback": candidate_assess}
+    return {"url": vidUrl, "feedback": candidate_assess}
+
+
+@router_record.get("/history")
+async def get_history(
+    current_user: dict = Depends(get_current_user)
+):
+    try:
+        result = await Database.get_history(current_user['_id'])
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

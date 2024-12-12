@@ -6,6 +6,10 @@ import cloudinary
 import cloudinary.uploader
 from cloudinary.utils import cloudinary_url
 import time
+from bson import ObjectId
+import tracemalloc
+
+tracemalloc.start()
 
 MONGO_URL = config('MONGO_URL')
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -54,8 +58,9 @@ class Database:
         return pwd_context.verify(plain_password, hashed_password)
     
     @classmethod
-    def add_empty_dict(cls, username:str):
-        cls.user_collection.update_one(
+    async def add_empty_dict(cls, username: str):
+        # Make this async and await the operation
+        await cls.user_collection.update_one(
             {"username": username},
             {"$set": {"history": {}}}
         )
@@ -92,11 +97,28 @@ class Database:
 
     @classmethod
     async def save_history(cls, user_id: str, video: str, feedback: str, question: str, quiz_id: str):
-        #add {quiz_id:{question:(video, feedback)}} to history
+        user_object_id = ObjectId(user_id)
+        
+        # Encode the question to make it a valid MongoDB key
+        encoded_question = question.replace('.', '_').replace('$', '_').replace(' ', '_')
+        
         await cls.user_collection.update_one(
-            {"_id": user_id},
-            {"$set": {f"history.{quiz_id}.{question}": [video, feedback]}}
+            {"_id": user_object_id},
+            {
+                "$set": {
+                    f"history.{quiz_id}.{encoded_question}": [video, feedback]
+                }
+            }
         )
+
+    @classmethod
+    async def get_history(cls, user_id: str):
+        user_object_id = ObjectId(user_id)
+        user_data = await cls.user_collection.find_one({"_id": user_object_id})
+        return user_data.get("history", {})
+
+
+
 
         
         

@@ -1,56 +1,74 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Feedback } from "../context/QuizContext";
 
 interface HistoryItem {
-  quizNumber: number;
+  quizID: number;
   question: string;
   videoURL: string;
   feedback: Feedback;
 }
 
+interface HistoryStructure {
+  [quiz_id: string]: {
+    [question: string]: [string, Feedback];
+  };
+}
+
+
+
 const History: React.FC = () => {
+  const [history, setHistory] = useState<HistoryStructure>();
   const [selectedFeedback, setSelectedFeedback] = useState<Feedback | null>(
     null
   );
 
-  const dummyHistory: HistoryItem[] = [
-    {
-      quizNumber: 1,
-      question: "Tell me about yourself.",
-      videoURL: "https://www.example.com/video1.mp4",
-      feedback: {
-        advanced_parameters: {
-          articulation: "Clear and precise",
-          enunciation: "Well-pronounced words",
-          intelligibility: "Highly understandable",
-          tone: "Professional and engaging",
-        },
-        filler_word_usage: {
-          comment: "Minimal use of filler words",
-          count: 3,
-        },
-        general_feedback: "Excellent presentation with strong delivery",
-        pause_pattern: {
-          comment: "Well-timed pauses",
-          count: 5,
-        },
-        sentence_structuring_and_grammar:
-          "Strong sentence structure with proper grammar",
-        speaking_rate: {
-          comment: "Balanced pace",
-          rate: 4,
-        },
-        timestamped_feedback: [
-          { feedback: "Strong opening", time: "00:00:15" },
-          { feedback: "Good eye contact", time: "00:00:30" },
-        ],
-        transcript: "Sample transcript of the response",
-      },
-    },
-    // Add more dummy items as needed
-  ];
+  useEffect(() => {
+    console.log("fetching history 1");
+    fetchHistory();
+  }, []);
 
+  const fetchHistory = async () => {
+    console.log("fetching history");
+    try {
+      const token  = localStorage.getItem("token");
+      const response = await fetch("http://localhost:8000/history", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch history");
+      }
+      const data = await response.json();
+      setHistory(data);
+    } catch (error) {
+      console.error("Error fetching history:", error);
+    }
+  };
+
+  const transformHistoryData = (historyData: HistoryStructure): HistoryItem[] => {
+    if (!historyData) return [];
+    
+    return Object.entries(historyData).flatMap(([quizId, questions]) =>
+      Object.entries(questions).map(([question, [videoURL, feedback]]) => ({
+        quizID: parseInt(quizId),
+        question,
+        videoURL,
+        feedback
+      }))
+    );
+  };
+  
+  const formatQuestion = (question: string) => {
+    return question
+      .replace(/_/g, ' ')
+      .replace(/\?$/, '?')
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  };
+  
   const renderFeedbackModal = (feedback: Feedback) => (
     <motion.div
       initial={{ opacity: 0 }}
@@ -128,7 +146,7 @@ const History: React.FC = () => {
         </h1>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {dummyHistory.map((item, index) => (
+          {history && transformHistoryData(history).map((item, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
@@ -136,14 +154,20 @@ const History: React.FC = () => {
               transition={{ delay: index * 0.1 }}
               className="bg-slate-800 rounded-xl overflow-hidden shadow-lg hover:shadow-cyan-500/10 transition-shadow"
             >
-              <div className="aspect-video bg-slate-700" />
+              <div className="aspect-video bg-slate-700">
+                <video
+                src={item.videoURL}
+                controls={true}
+                className="w-full h-full object-cover"
+                />
+              </div>
               <div className="p-4">
                 <p className="text-sm font-semibold text-neutral-200 mb-2">
-                  Quiz #{item.quizNumber}
+                  Quiz #{item.quizID}
                 </p>
-                <h2 className="text-lg font-semibold text-white mb-2">
+                <h2 className="text-lg font-semibold text-white mb-2 break-words whitespace-normal">
                   <span className="text-neutral-300">Question: </span>
-                  {item.question}
+                  {formatQuestion(item.question)}
                 </h2>
                 <button
                   onClick={() => setSelectedFeedback(item.feedback)}
@@ -154,6 +178,18 @@ const History: React.FC = () => {
               </div>
             </motion.div>
           ))}
+          {history && transformHistoryData(history).length === 0 && (
+            (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="col-span-full text-center py-12"
+              >
+                <h2 className="text-2xl font-semibold text-cyan-400 mb-4">No History Yet</h2>
+                <p className="text-neutral-300">Participate in talk sessions to view your practice history</p>
+              </motion.div>
+            )
+          )}
         </div>
 
         <AnimatePresence>

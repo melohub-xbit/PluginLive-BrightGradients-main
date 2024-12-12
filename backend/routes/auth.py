@@ -80,7 +80,7 @@ async def register(user: UserCreate):
             detail="Username already taken"
         )
     await Database.save_user(user.dict())
-    Database.add_empty_dict(user.username)
+    await Database.add_empty_dict(user.username)
 
     return {"message": "User created successfully"}
 
