@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuiz } from "../context/QuizContext";
 import { format } from "date-fns";
 import { useAuth } from "../context/AuthContext";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface ActionableRecommendation {
   reason: string;
@@ -58,8 +58,6 @@ const Results = () => {
   const { user } = useAuth();
   const currentDate = format(new Date(), "dd-MMM-yyyy");
   const [downloading, setDownloading] = useState(false);
-  const [showFullFeedback, setShowFullFeedback] = useState(false);
-
   const downloadReport = async (feedbackData: FinalFeedback | null) => {
     if (!feedbackData) return;
 
@@ -112,13 +110,6 @@ const Results = () => {
       className="bg-slate-800 p-8 rounded-xl max-w-2xl max-h-[80vh] overflow-y-auto m-4 relative"
       onClick={(e) => e.stopPropagation()}
     >
-      <button
-        className="absolute top-2 right-2 text-white hover:text-gray-400"
-        onClick={() => setShowFullFeedback(false)}
-      >
-        &times;
-      </button>
-
       <h3 className="text-xl font-bold mb-4 text-cyan-400">
         Detailed Feedback
       </h3>
