@@ -93,59 +93,145 @@ const Quiz = () => {
     }
 
     return (
-      <div>
-        <p className="font-semibold">General Feedback:</p>
-        <p>{feedback.general_feedback}</p>
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4 }}
+        className="max-w-5xl mx-auto space-y-4"
+      >
         {feedback.transcript && (
-          <p>
-            <strong>Transcript:</strong> {feedback.transcript}
-          </p>
+          <motion.div
+            initial={{ x: -20 }}
+            animate={{ x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 hover:border-cyan-500/30 transition-colors"
+          >
+            <h3 className="text-sm text-cyan-400 mb-1">Transcript</h3>
+            <p className="text-slate-300 text-sm">{feedback.transcript}</p>
+          </motion.div>
         )}
 
-        <p className="font-semibold">Verbal Analysis:</p>
-        <ul>
-          <li>Articulation: {feedback.advanced_parameters.articulation}</li>
-          <li>Enunciation: {feedback.advanced_parameters.enunciation}</li>
-          <li>Tone: {feedback.advanced_parameters.tone}</li>
-          <li>
-            Grammar & Structure: {feedback.sentence_structuring_and_grammar}
-          </li>
-          <li>Speaking Rate: {feedback.speaking_rate.comment}</li>
-          <li>Filler Words: {feedback.filler_word_usage.comment}</li>
-        </ul>
+        <motion.div
+            initial={{ x: -20 }}
+            animate={{ x: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 hover:border-cyan-500/30 transition-colors"
+          >
+            <h3 className="text-sm text-cyan-400 mb-1">General Feedback</h3>
+            <p className="text-slate-300 text-sm">{feedback.general_feedback}</p>
+        </motion.div>
+
+        <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+            <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 hover:border-cyan-500/30 transition-all hover:shadow-lg hover:shadow-cyan-500/10">
+              <h3 className="text-sm text-cyan-400 mb-4">Verbal Analysis</h3>
+              <div className="grid gap-3">
+                {/* Voice Quality Metrics */}
+                <div className="space-y-2">
+                  <h4 className="text-xs uppercase tracking-wider text-slate-400">Voice Quality</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex flex-col">
+                      <span className="text-slate-400 text-xs">Articulation</span>
+                      <span className="text-slate-200 text-sm font-medium">{feedback.advanced_parameters.articulation}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-slate-400 text-xs">Enunciation</span>
+                      <span className="text-slate-200 text-sm font-medium">{feedback.advanced_parameters.enunciation}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Speech Pattern Metrics */}
+                <div className="space-y-2">
+                  <h4 className="text-xs uppercase tracking-wider text-slate-400">Speech Pattern</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex flex-col">
+                      <span className="text-slate-400 text-xs">Tone</span>
+                      <span className="text-slate-200 text-sm font-medium">{feedback.advanced_parameters.tone}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-slate-400 text-xs">Grammar</span>
+                      <span className="text-slate-200 text-sm font-medium">{feedback.sentence_structuring_and_grammar}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Additional Metrics */}
+                <div className="space-y-2">
+                  <h4 className="text-xs uppercase tracking-wider text-slate-400">Delivery</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex flex-col">
+                      <span className="text-slate-400 text-xs">Speaking Rate</span>
+                      <span className="text-slate-200 text-sm font-medium">{feedback.speaking_rate.comment}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-slate-400 text-xs">Filler Words</span>
+                      <span className="text-slate-200 text-sm font-medium">{feedback.filler_word_usage.comment}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+          <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 hover:border-cyan-500/30 transition-all hover:shadow-lg hover:shadow-cyan-500/10">
+            <h3 className="text-sm text-cyan-400 mb-2">Non-Verbal Analysis</h3>
+            <ul className="space-y-1 text-sm">
+              <li className="flex justify-between">
+                <span className="text-slate-400">Posture</span>
+                <span className="text-slate-200">Needs improvement</span>
+              </li>
+              <li className="flex justify-between">
+                <span className="text-slate-400">Gestures</span>
+                <span className="text-slate-200">More expression needed</span>
+              </li>
+              <li className="flex justify-between">
+                <span className="text-slate-400">Eye Contact</span>
+                <span className="text-slate-200">Enhance engagement</span>
+              </li>
+            </ul>
+          </div>
+        </div>
 
         {feedback.timestamped_feedback.length > 0 && (
-          <>
-            <p className="font-semibold">Timestamped Feedback:</p>
-            <ul>
-              {feedback.timestamped_feedback.map(
-                (item: { time: string; feedback: string }, i: number) => (
-                  <li key={i}>
-                    {item.time}: {item.feedback}
-                  </li>
-                )
-              )}
-            </ul>
-          </>
+          <motion.div
+            initial={{ x: -20 }}
+            animate={{ x: 0 }}
+            transition={{ delay: 0.5 }}
+            className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 hover:border-cyan-500/30 transition-colors"
+          >
+            <h3 className="text-sm text-cyan-400 mb-2">Timeline</h3>
+            <div className="space-y-1 text-sm">
+              {feedback.timestamped_feedback.map((item, i) => (
+                <div key={i} className="flex gap-2">
+                  <span className="text-cyan-500">{item.time}</span>
+                  <span className="text-slate-300">{item.feedback}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
         )}
 
-        <p className="font-semibold">Non-Verbal Analysis:</p>
-        <ul>
-          <li>Posture: Work on maintaining a more consistent posture.</li>
-          <li>Gestures: Use more expressive hand gestures.</li>
-          <li>Eye Contact: Improve eye contact to enhance engagement.</li>
-          <li>Speech Clarity: Focus on clarity and articulation.</li>
-        </ul>
+        <motion.div
+            initial={{ x: -20 }}
+            animate={{ x: 0 }}
+            transition={{ delay: 0.6 }}
+            className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 hover:border-cyan-500/30 transition-colors"
+          >
+          <h3 className="text-sm text-cyan-400 mb-2">Summary</h3>
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span className="text-emerald-400">Strengths</span>
+              <p className="text-slate-300">Correct grammar and structure</p>
+            </div>
+            <div>
+              <span className="text-amber-400">Improvements</span>
+              <p className="text-slate-300">Build confidence and gestures</p>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
 
-        <p className="font-semibold">Summary:</p>
-        <ul>
-          <li>Strengths: Correct grammar and sentence structure.</li>
-          <li>
-            Improvements Needed: Build confidence in tone and use gestures
-            effectively.
-          </li>
-        </ul>
-      </div>
+
     );
   };
 
@@ -178,10 +264,11 @@ const Quiz = () => {
       </div>
 
       <motion.div
-        key={currentQuestionIndex}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-3xl mx-auto"
+         key={currentQuestionIndex}
+         initial={{ opacity: 0, y: 20 }}
+         animate={{ opacity: 1, y: 0 }}
+         transition={{ duration: 0.5 }}
+         className="max-w-5xl mx-auto"
       >
         <div className="bg-slate-800/50 backdrop-blur-sm p-8 rounded-xl shadow-lg mb-6">
           <h2 className="text-2xl mb-6 text-center">
