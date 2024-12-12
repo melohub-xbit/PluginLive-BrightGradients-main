@@ -64,6 +64,10 @@ class Database:
             {"username": username},
             {"$set": {"history": {}}}
         )
+        await cls.user_collection.update_one(
+            {"username": username},
+            {"$set": {"final_feedbacks": {}}}
+        )
 
     @classmethod
     async def save_video(cls, video_data: dict):
